@@ -19,11 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Sync Upstream
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
         with:
-          upstream_repository: JimLiu/baoyu-skills
-          upstream_branch: main
-          target_branch: main
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # 可选：强制同步（覆盖本地冲突）
-          force_sync: true
+          upstream_sync_repo: JimLiu/baoyu-skills
+          upstream_sync_branch: main
+          target_sync_branch: main
+          target_repo_token: ${{ secrets.GITHUB_TOKEN }}

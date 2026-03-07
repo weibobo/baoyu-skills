@@ -152,3 +152,12 @@ slide-deck/
 infographic/
 illustrations/
 comic/
+translate/
+posts/
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+.claude/skills/baoyu-skill-evolution

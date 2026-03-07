@@ -53,9 +53,9 @@ npx skills add jimliu/baoyu-skills
 
 | 插件 | 说明 | 包含技能 |
 |------|------|----------|
-| **content-skills** | 内容生成和发布 | [xhs-images](#baoyu-xhs-images), [infographic](#baoyu-infographic), [cover-image](#baoyu-cover-image), [slide-deck](#baoyu-slide-deck), [comic](#baoyu-comic), [article-illustrator](#baoyu-article-illustrator), [post-to-x](#baoyu-post-to-x), [post-to-wechat](#baoyu-post-to-wechat) |
+| **content-skills** | 内容生成和发布 | [xhs-images](#baoyu-xhs-images), [infographic](#baoyu-infographic), [cover-image](#baoyu-cover-image), [slide-deck](#baoyu-slide-deck), [comic](#baoyu-comic), [article-illustrator](#baoyu-article-illustrator), [post-to-x](#baoyu-post-to-x), [post-to-wechat](#baoyu-post-to-wechat), [post-to-weibo](#baoyu-post-to-weibo) |
 | **ai-generation-skills** | AI 生成后端 | [image-gen](#baoyu-image-gen), [danger-gemini-web](#baoyu-danger-gemini-web) |
-| **utility-skills** | 内容处理工具 | [url-to-markdown](#baoyu-url-to-markdown), [danger-x-to-markdown](#baoyu-danger-x-to-markdown), [compress-image](#baoyu-compress-image) |
+| **utility-skills** | 内容处理工具 | [url-to-markdown](#baoyu-url-to-markdown), [danger-x-to-markdown](#baoyu-danger-x-to-markdown), [compress-image](#baoyu-compress-image), [format-markdown](#baoyu-format-markdown), [translate](#baoyu-translate) |
 
 ## 更新技能
 
@@ -245,7 +245,7 @@ npx skills add jimliu/baoyu-skills
 
 #### baoyu-cover-image
 
-为文章生成封面图，支持四维定制系统：类型 × 风格 × 文字 × 氛围。
+为文章生成封面图，支持五维定制系统：类型 × 配色 × 渲染 × 文字 × 氛围。9 种配色方案与 6 种渲染风格组合，提供 54 种独特效果。
 
 ```bash
 # 根据内容自动选择所有维度
@@ -254,43 +254,26 @@ npx skills add jimliu/baoyu-skills
 # 快速模式：跳过确认，使用自动选择
 /baoyu-cover-image path/to/article.md --quick
 
-# 指定维度
-/baoyu-cover-image path/to/article.md --type conceptual --style blueprint
+# 指定维度（5D 系统）
+/baoyu-cover-image path/to/article.md --type conceptual --palette cool --rendering digital
 /baoyu-cover-image path/to/article.md --text title-subtitle --mood bold
 
-# 指定宽高比（默认：2.35:1）
-/baoyu-cover-image path/to/article.md --aspect 16:9
+# 风格预设（向后兼容的简写方式）
+/baoyu-cover-image path/to/article.md --style blueprint
+
+# 指定宽高比（默认：16:9）
+/baoyu-cover-image path/to/article.md --aspect 2.35:1
 
 # 纯视觉（不含标题文字）
 /baoyu-cover-image path/to/article.md --no-title
 ```
 
-**四个维度**：
+**五个维度**：
 - **类型 (Type)**：`hero`、`conceptual`、`typography`、`metaphor`、`scene`、`minimal`
-- **风格 (Style)**：20 种内置风格（见下方预览）
+- **配色 (Palette)**：`warm`、`elegant`、`cool`、`dark`、`earth`、`vivid`、`pastel`、`mono`、`retro`
+- **渲染 (Rendering)**：`flat-vector`、`hand-drawn`、`painterly`、`digital`、`pixel`、`chalk`
 - **文字 (Text)**：`none`、`title-only`（默认）、`title-subtitle`、`text-rich`
 - **氛围 (Mood)**：`subtle`、`balanced`（默认）、`bold`
-
-可用风格：`elegant`（默认）、`blueprint`、`bold-editorial`、`chalkboard`、`dark-atmospheric`、`editorial-infographic`、`fantasy-animation`、`flat-doodle`、`intuition-machine`、`minimal`、`nature`、`notion`、`pixel-art`、`playful`、`retro`、`sketch-notes`、`vector-illustration`、`vintage`、`warm`、`watercolor`
-
-**风格预览**：
-
-| | | |
-|:---:|:---:|:---:|
-| ![elegant](./screenshots/cover-image-styles/elegant.webp) | ![blueprint](./screenshots/cover-image-styles/blueprint.webp) | ![bold-editorial](./screenshots/cover-image-styles/bold-editorial.webp) |
-| elegant | blueprint | bold-editorial |
-| ![chalkboard](./screenshots/cover-image-styles/chalkboard.webp) | ![dark-atmospheric](./screenshots/cover-image-styles/dark-atmospheric.webp) | ![editorial-infographic](./screenshots/cover-image-styles/editorial-infographic.webp) |
-| chalkboard | dark-atmospheric | editorial-infographic |
-| ![fantasy-animation](./screenshots/cover-image-styles/fantasy-animation.webp) | ![intuition-machine](./screenshots/cover-image-styles/intuition-machine.webp) | ![minimal](./screenshots/cover-image-styles/minimal.webp) |
-| fantasy-animation | intuition-machine | minimal |
-| ![nature](./screenshots/cover-image-styles/nature.webp) | ![notion](./screenshots/cover-image-styles/notion.webp) | ![pixel-art](./screenshots/cover-image-styles/pixel-art.webp) |
-| nature | notion | pixel-art |
-| ![playful](./screenshots/cover-image-styles/playful.webp) | ![retro](./screenshots/cover-image-styles/retro.webp) | ![sketch-notes](./screenshots/cover-image-styles/sketch-notes.webp) |
-| playful | retro | sketch-notes |
-| ![vector-illustration](./screenshots/cover-image-styles/vector-illustration.webp) | ![vintage](./screenshots/cover-image-styles/vintage.webp) | ![warm](./screenshots/cover-image-styles/warm.webp) |
-| vector-illustration | vintage | warm |
-| ![watercolor](./screenshots/cover-image-styles/watercolor.webp) | ![flat-doodle](./screenshots/cover-image-styles/flat-doodle.webp) | |
-| watercolor | flat-doodle | |
 
 #### baoyu-slide-deck
 
@@ -536,12 +519,12 @@ npx skills add jimliu/baoyu-skills
 
 发布内容到微信公众号，支持两种模式：
 
-**图文模式** - 多图配短标题和正文：
+**贴图模式** - 多图配短标题和正文：
 
 ```bash
-/baoyu-post-to-wechat 图文 --markdown article.md --images ./photos/
-/baoyu-post-to-wechat 图文 --markdown article.md --image img1.png --image img2.png --image img3.png
-/baoyu-post-to-wechat 图文 --title "标题" --content "内容" --image img1.png --submit
+/baoyu-post-to-wechat 贴图 --markdown article.md --images ./photos/
+/baoyu-post-to-wechat 贴图 --markdown article.md --image img1.png --image img2.png --image img3.png
+/baoyu-post-to-wechat 贴图 --title "标题" --content "内容" --image img1.png --submit
 ```
 
 **文章模式** - 完整 markdown/HTML 富文本格式：
@@ -552,7 +535,64 @@ npx skills add jimliu/baoyu-skills
 /baoyu-post-to-wechat 文章 --html article.html
 ```
 
-前置要求：已安装 Google Chrome，首次运行需扫码登录（登录状态会保存）
+**发布方式**：
+
+| 方式 | 速度 | 要求 |
+|------|------|------|
+| API（推荐） | 快 | API 凭证 |
+| 浏览器 | 慢 | Chrome，登录会话 |
+
+**API 配置**（更快的发布方式）：
+
+```bash
+# 添加到 .baoyu-skills/.env（项目级）或 ~/.baoyu-skills/.env（用户级）
+WECHAT_APP_ID=你的AppID
+WECHAT_APP_SECRET=你的AppSecret
+```
+
+获取凭证方法：
+1. 访问 https://developers.weixin.qq.com/platform/
+2. 进入：我的业务 → 公众号 → 开发密钥
+3. 添加开发密钥，复制 AppID 和 AppSecret
+4. 将你操作的机器 IP 加入白名单
+
+**浏览器方式**（无需 API 配置）：需已安装 Google Chrome，首次运行需扫码登录（登录状态会保存）
+
+#### baoyu-post-to-weibo
+
+发布内容到微博。支持文字、图片、视频发布和头条文章（长篇 Markdown）。使用真实 Chrome + CDP 绕过反自动化检测。
+
+**普通微博** - 文字 + 图片/视频（最多 18 个文件）：
+
+```bash
+# 发布文字
+/baoyu-post-to-weibo "Hello Weibo!"
+
+# 发布带图片
+/baoyu-post-to-weibo "看看这个" --image photo.png
+
+# 发布带视频
+/baoyu-post-to-weibo "看这个" --video clip.mp4
+```
+
+**头条文章** - 长篇 Markdown 文章：
+
+```bash
+# 发布文章
+/baoyu-post-to-weibo --article article.md
+
+# 带封面图
+/baoyu-post-to-weibo --article article.md --cover cover.jpg
+```
+
+**文章选项**：
+| 选项 | 说明 |
+|------|------|
+| `--cover <path>` | 封面图 |
+| `--title <text>` | 覆盖标题（最多 32 字） |
+| `--summary <text>` | 覆盖摘要（最多 44 字） |
+
+**说明**：脚本会将内容填入浏览器，用户需手动检查并发布。首次运行需手动登录微博（登录状态会保存）。
 
 ### AI 生成技能 (AI Generation Skills)
 
@@ -560,7 +600,7 @@ AI 驱动的生成后端。
 
 #### baoyu-image-gen
 
-基于 AI SDK 的图像生成，使用官方 OpenAI 和 Google API。支持文生图、参考图、宽高比和质量预设。
+基于 AI SDK 的图像生成，使用官方 OpenAI、Google 和 DashScope（阿里通义万相）API。支持文生图、参考图、宽高比和质量预设。
 
 ```bash
 # 基础生成（自动检测服务商）
@@ -575,6 +615,9 @@ AI 驱动的生成后端。
 # 指定服务商
 /baoyu-image-gen --prompt "一只猫" --image cat.png --provider openai
 
+# DashScope（阿里通义万相）
+/baoyu-image-gen --prompt "一只可爱的猫" --image cat.png --provider dashscope
+
 # 带参考图（仅 Google 多模态支持）
 /baoyu-image-gen --prompt "把它变成蓝色" --image out.png --ref source.png
 ```
@@ -585,7 +628,7 @@ AI 驱动的生成后端。
 | `--prompt`, `-p` | 提示词文本 |
 | `--promptfiles` | 从文件读取提示词（多文件拼接） |
 | `--image` | 输出图片路径（必需） |
-| `--provider` | `google` 或 `openai`（默认：google） |
+| `--provider` | `google`、`openai` 或 `dashscope`（默认：google） |
 | `--model`, `-m` | 模型 ID |
 | `--ar` | 宽高比（如 `16:9`、`1:1`、`4:3`） |
 | `--size` | 尺寸（如 `1024x1024`） |
@@ -597,15 +640,18 @@ AI 驱动的生成后端。
 |------|------|--------|
 | `OPENAI_API_KEY` | OpenAI API 密钥 | - |
 | `GOOGLE_API_KEY` | Google API 密钥 | - |
+| `DASHSCOPE_API_KEY` | DashScope API 密钥（阿里云） | - |
 | `OPENAI_IMAGE_MODEL` | OpenAI 模型 | `gpt-image-1.5` |
 | `GOOGLE_IMAGE_MODEL` | Google 模型 | `gemini-3-pro-image-preview` |
+| `DASHSCOPE_IMAGE_MODEL` | DashScope 模型 | `z-image-turbo` |
 | `OPENAI_BASE_URL` | 自定义 OpenAI 端点 | - |
 | `GOOGLE_BASE_URL` | 自定义 Google 端点 | - |
+| `DASHSCOPE_BASE_URL` | 自定义 DashScope 端点 | - |
 
 **服务商自动选择**：
 1. 如果指定了 `--provider` → 使用指定的
 2. 如果只有一个 API 密钥 → 使用对应服务商
-3. 如果两个都有 → 默认使用 Google
+3. 如果多个可用 → 默认使用 Google
 
 #### baoyu-danger-gemini-web
 
@@ -631,7 +677,7 @@ AI 驱动的生成后端。
 
 #### baoyu-url-to-markdown
 
-通过 Chrome CDP 抓取任意 URL 并转换为干净的 Markdown。支持两种抓取模式，适应不同场景。
+通过 Chrome CDP 抓取任意 URL 并转换为 Markdown。同时保存渲染后的 HTML 快照，Defuddle 失败时自动回退到旧版提取器。
 
 ```bash
 # 自动模式（默认）- 页面加载后立即抓取
@@ -671,6 +717,9 @@ AI 驱动的生成后端。
 
 # JSON 输出
 /baoyu-danger-x-to-markdown https://x.com/username/status/123456 --json
+
+# 下载媒体文件（图片/视频）到本地
+/baoyu-danger-x-to-markdown https://x.com/username/status/123456 --download-media
 ```
 
 **支持的 URL：**
@@ -688,6 +737,123 @@ AI 驱动的生成后端。
 /baoyu-compress-image path/to/image.png
 /baoyu-compress-image path/to/images/ --quality 80
 ```
+
+#### baoyu-format-markdown
+
+格式化纯文本或 Markdown 文件，添加 frontmatter、标题、摘要、层级标题、加粗、列表和代码块。
+
+```bash
+# 格式化 markdown 文件
+/baoyu-format-markdown path/to/article.md
+
+# 格式化指定文件
+/baoyu-format-markdown path/to/draft.md
+```
+
+**工作流程**：
+1. 读取源文件并分析内容结构
+2. 检查/创建 YAML frontmatter（title、slug、summary、coverImage）
+3. 处理标题：使用现有标题、提取 H1 或生成候选标题
+4. 应用格式：层级标题、加粗、列表、代码块、引用
+5. 保存为 `{文件名}-formatted.md`
+6. 运行排版脚本：半角引号→全角引号、中英文空格、autocorrect
+
+**Frontmatter 字段**：
+| 字段 | 处理方式 |
+|------|----------|
+| `title` | 使用现有、提取 H1 或生成候选 |
+| `slug` | 从文件路径推断或根据标题生成 |
+| `summary` | 生成吸引人的摘要（100-150 字） |
+| `coverImage` | 检查同目录下 `imgs/cover.png` |
+
+**格式化规则**：
+| 元素 | 格式 |
+|------|------|
+| 标题 | `#`、`##`、`###` 层级 |
+| 重点内容 | `**加粗**` |
+| 并列要点 | `-` 无序列表或 `1.` 有序列表 |
+| 代码/命令 | `` `行内` `` 或 ` ```代码块``` ` |
+| 引用 | `>` 引用块 |
+
+#### baoyu-translate
+
+三模式翻译技能：快速（直接翻译）、标准（分析后翻译）、精翻（完整出版级工作流，含审校与润色）。
+
+```bash
+# 标准模式（默认）- 先分析再翻译
+/translate article.md --to zh-CN
+
+# 快速模式 - 直接翻译
+/translate article.md --mode quick --to ja
+
+# 精翻模式 - 完整工作流，含审校与润色
+/translate article.md --mode refined --to zh-CN
+
+# 翻译 URL
+/translate https://example.com/article --to zh-CN
+
+# 指定受众
+/translate article.md --to zh-CN --audience technical
+
+# 指定风格
+/translate article.md --to zh-CN --style humorous
+
+# 附加术语表
+/translate article.md --to zh-CN --glossary my-terms.md
+```
+
+**选项**：
+| 选项 | 说明 |
+|------|------|
+| `<source>` | 文件路径、URL 或行内文本 |
+| `--mode <mode>` | `quick`、`normal`（默认）、`refined` |
+| `--from <lang>` | 源语言（省略则自动检测） |
+| `--to <lang>` | 目标语言（默认：`zh-CN`） |
+| `--audience <type>` | 目标读者（默认：`general`） |
+| `--style <style>` | 翻译风格（默认：`storytelling`） |
+| `--glossary <file>` | 附加术语表文件 |
+
+**模式**：
+| 模式 | 步骤 | 适用场景 |
+|------|------|----------|
+| 快速 | 翻译 | 短文本、非正式内容 |
+| 标准 | 分析 → 翻译 | 文章、博客 |
+| 精翻 | 分析 → 翻译 → 审校 → 润色 | 出版级文档 |
+
+标准模式完成后，可回复「继续润色」或「refine」继续审校润色步骤。
+
+**受众预设**：
+| 值 | 说明 |
+|----|------|
+| `general` | 普通读者（默认）— 通俗语言，更多译注 |
+| `technical` | 开发者/工程师 — 常见技术术语少加注释 |
+| `academic` | 研究者/学者 — 正式语体，精确术语 |
+| `business` | 商务人士 — 商务友好语气 |
+
+也支持自定义受众描述，如 `--audience "对 AI 感兴趣的普通读者"`。
+
+**风格预设**：
+| 值 | 说明 |
+|----|------|
+| `storytelling` | 叙事流畅（默认）— 过渡自然，表达生动 |
+| `formal` | 正式、结构化 — 中性语气，无口语化表达 |
+| `technical` | 精确、文档风格 — 简洁，术语密集 |
+| `literal` | 贴近原文结构 — 最小化重构 |
+| `academic` | 学术、严谨 — 正式语体，复杂从句可接受 |
+| `business` | 简洁、结果导向 — 行动导向，高管友好 |
+| `humorous` | 保留幽默感 — 诙谐，在目标语言中重现喜剧效果 |
+| `conversational` | 口语化、亲切 — 友好，如同朋友间解释 |
+| `elegant` | 文学性、优雅 — 精心雕琢，注重韵律美感 |
+
+也支持自定义风格描述，如 `--style "诗意而抒情"`。
+
+**特性**：
+- 通过 EXTEND.md 自定义术语表，内置英中术语表
+- 面向受众的翻译，可调节注释深度
+- 长文档（4000+ 词）自动分块并行翻译
+- 比喻和修辞按意译而非逐字翻译
+- 为文化/专业术语添加译注
+- 输出目录保留所有中间文件
 
 ## 环境配置
 
@@ -716,6 +882,11 @@ OPENAI_IMAGE_MODEL=gpt-image-1.5
 GOOGLE_API_KEY=xxx
 GOOGLE_IMAGE_MODEL=gemini-3-pro-image-preview
 # GOOGLE_BASE_URL=https://generativelanguage.googleapis.com/v1beta
+
+# DashScope（阿里通义万相）
+DASHSCOPE_API_KEY=sk-xxx
+DASHSCOPE_IMAGE_MODEL=z-image-turbo
+# DASHSCOPE_BASE_URL=https://dashscope.aliyuncs.com/api/v1
 EOF
 ```
 
@@ -744,13 +915,14 @@ mkdir -p .baoyu-skills/baoyu-cover-image
 然后创建 `.baoyu-skills/baoyu-cover-image/EXTEND.md`：
 
 ```markdown
-## 自定义风格
+## 自定义配色
 
-### brand
-- 主色：#1a73e8
-- 辅色：#34a853
-- 字体风格：现代无衬线
-- 始终包含公司 logo 水印
+### corporate-tech
+- 主色：#1a73e8、#4A90D9
+- 背景色：#F5F7FA
+- 强调色：#00B4D8、#48CAE4
+- 装饰提示：简洁线条、渐变效果
+- 适用于：SaaS、企业、技术内容
 ```
 
 扩展内容会在技能执行前加载，并覆盖默认设置。

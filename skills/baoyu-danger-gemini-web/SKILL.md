@@ -14,7 +14,8 @@ Text/image generation via Gemini Web API. Supports reference images and multi-tu
 **Agent Execution Instructions**:
 1. Determine this SKILL.md file's directory path as `SKILL_DIR`
 2. Script path = `${SKILL_DIR}/scripts/<script-name>.ts`
-3. Replace all `${SKILL_DIR}` in this document with the actual path
+3. Resolve `${BUN_X}` runtime: if `bun` installed → `bun`; if `npx` available → `npx -y bun`; else suggest installing bun
+4. Replace all `${SKILL_DIR}` and `${BUN_X}` in this document with actual values
 
 **Script Reference**:
 | Script | Purpose |
@@ -43,14 +44,18 @@ Before first use, verify user consent for reverse-engineered API usage.
 
 ## Preferences (EXTEND.md)
 
-Use Bash to check EXTEND.md existence (priority order):
+Check EXTEND.md existence (priority order):
 
 ```bash
-# Check project-level first
+# macOS, Linux, WSL, Git Bash
 test -f .baoyu-skills/baoyu-danger-gemini-web/EXTEND.md && echo "project"
-
-# Then user-level (cross-platform: $HOME works on macOS/Linux/WSL)
 test -f "$HOME/.baoyu-skills/baoyu-danger-gemini-web/EXTEND.md" && echo "user"
+```
+
+```powershell
+# PowerShell (Windows)
+if (Test-Path .baoyu-skills/baoyu-danger-gemini-web/EXTEND.md) { "project" }
+if (Test-Path "$HOME/.baoyu-skills/baoyu-danger-gemini-web/EXTEND.md") { "user" }
 ```
 
 ┌──────────────────────────────────────────────────────────┬───────────────────┐
@@ -75,23 +80,23 @@ test -f "$HOME/.baoyu-skills/baoyu-danger-gemini-web/EXTEND.md" && echo "user"
 
 ```bash
 # Text generation
-npx -y bun ${SKILL_DIR}/scripts/main.ts "Your prompt"
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "Your prompt" --model gemini-2.5-pro
+${BUN_X} ${SKILL_DIR}/scripts/main.ts "Your prompt"
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "Your prompt" --model gemini-3-flash
 
 # Image generation
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "A cute cat" --image cat.png
-npx -y bun ${SKILL_DIR}/scripts/main.ts --promptfiles system.md content.md --image out.png
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "A cute cat" --image cat.png
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --promptfiles system.md content.md --image out.png
 
 # Vision input (reference images)
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "Describe this" --reference image.png
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "Create variation" --reference a.png --image out.png
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "Describe this" --reference image.png
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "Create variation" --reference a.png --image out.png
 
 # Multi-turn conversation
-npx -y bun ${SKILL_DIR}/scripts/main.ts "Remember: 42" --sessionId session-abc
-npx -y bun ${SKILL_DIR}/scripts/main.ts "What number?" --sessionId session-abc
+${BUN_X} ${SKILL_DIR}/scripts/main.ts "Remember: 42" --sessionId session-abc
+${BUN_X} ${SKILL_DIR}/scripts/main.ts "What number?" --sessionId session-abc
 
 # JSON output
-npx -y bun ${SKILL_DIR}/scripts/main.ts "Hello" --json
+${BUN_X} ${SKILL_DIR}/scripts/main.ts "Hello" --json
 ```
 
 ## Options
@@ -100,7 +105,7 @@ npx -y bun ${SKILL_DIR}/scripts/main.ts "Hello" --json
 |--------|-------------|
 | `--prompt`, `-p` | Prompt text |
 | `--promptfiles` | Read prompt from files (concatenated) |
-| `--model`, `-m` | Model: gemini-3-pro (default), gemini-2.5-pro, gemini-2.5-flash |
+| `--model`, `-m` | Model: gemini-3-pro (default), gemini-3-flash, gemini-3-flash-thinking, gemini-3.1-pro-preview |
 | `--image [path]` | Generate image (default: generated.png) |
 | `--reference`, `--ref` | Reference images for vision input |
 | `--sessionId` | Session ID for multi-turn conversation |
@@ -114,9 +119,10 @@ npx -y bun ${SKILL_DIR}/scripts/main.ts "Hello" --json
 
 | Model | Description |
 |-------|-------------|
-| `gemini-3-pro` | Default, latest |
-| `gemini-2.5-pro` | Previous pro |
-| `gemini-2.5-flash` | Fast, lightweight |
+| `gemini-3-pro` | Default, latest 3.0 Pro |
+| `gemini-3-flash` | Fast, lightweight 3.0 Flash |
+| `gemini-3-flash-thinking` | 3.0 Flash with thinking |
+| `gemini-3.1-pro-preview` | 3.1 Pro preview (empty header, auto-routed) |
 
 ## Authentication
 

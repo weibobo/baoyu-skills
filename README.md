@@ -53,9 +53,9 @@ Simply tell Claude Code:
 
 | Plugin | Description | Skills |
 |--------|-------------|--------|
-| **content-skills** | Content generation and publishing | [xhs-images](#baoyu-xhs-images), [infographic](#baoyu-infographic), [cover-image](#baoyu-cover-image), [slide-deck](#baoyu-slide-deck), [comic](#baoyu-comic), [article-illustrator](#baoyu-article-illustrator), [post-to-x](#baoyu-post-to-x), [post-to-wechat](#baoyu-post-to-wechat) |
+| **content-skills** | Content generation and publishing | [xhs-images](#baoyu-xhs-images), [infographic](#baoyu-infographic), [cover-image](#baoyu-cover-image), [slide-deck](#baoyu-slide-deck), [comic](#baoyu-comic), [article-illustrator](#baoyu-article-illustrator), [post-to-x](#baoyu-post-to-x), [post-to-wechat](#baoyu-post-to-wechat), [post-to-weibo](#baoyu-post-to-weibo) |
 | **ai-generation-skills** | AI-powered generation backends | [image-gen](#baoyu-image-gen), [danger-gemini-web](#baoyu-danger-gemini-web) |
-| **utility-skills** | Utility tools for content processing | [url-to-markdown](#baoyu-url-to-markdown), [danger-x-to-markdown](#baoyu-danger-x-to-markdown), [compress-image](#baoyu-compress-image) |
+| **utility-skills** | Utility tools for content processing | [url-to-markdown](#baoyu-url-to-markdown), [danger-x-to-markdown](#baoyu-danger-x-to-markdown), [compress-image](#baoyu-compress-image), [format-markdown](#baoyu-format-markdown), [translate](#baoyu-translate) |
 
 ## Update Skills
 
@@ -245,7 +245,7 @@ Generate professional infographics with 20 layout types and 17 visual styles. An
 
 #### baoyu-cover-image
 
-Generate cover images for articles with 4 dimensions: Type × Style × Text × Mood.
+Generate cover images for articles with 5 dimensions: Type × Palette × Rendering × Text × Mood. Combines 9 color palettes with 6 rendering styles for 54 unique combinations.
 
 ```bash
 # Auto-select all dimensions based on content
@@ -254,43 +254,26 @@ Generate cover images for articles with 4 dimensions: Type × Style × Text × M
 # Quick mode: skip confirmation, use auto-selection
 /baoyu-cover-image path/to/article.md --quick
 
-# Specify dimensions
-/baoyu-cover-image path/to/article.md --type conceptual --style blueprint
+# Specify dimensions (5D system)
+/baoyu-cover-image path/to/article.md --type conceptual --palette cool --rendering digital
 /baoyu-cover-image path/to/article.md --text title-subtitle --mood bold
 
-# Specify aspect ratio (default: 2.35:1)
-/baoyu-cover-image path/to/article.md --aspect 16:9
+# Style presets (backward-compatible shorthand)
+/baoyu-cover-image path/to/article.md --style blueprint
+
+# Specify aspect ratio (default: 16:9)
+/baoyu-cover-image path/to/article.md --aspect 2.35:1
 
 # Visual only (no title text)
 /baoyu-cover-image path/to/article.md --no-title
 ```
 
-**Four Dimensions**:
+**Five Dimensions**:
 - **Type**: `hero`, `conceptual`, `typography`, `metaphor`, `scene`, `minimal`
-- **Style**: 20 built-in styles (see previews below)
+- **Palette**: `warm`, `elegant`, `cool`, `dark`, `earth`, `vivid`, `pastel`, `mono`, `retro`
+- **Rendering**: `flat-vector`, `hand-drawn`, `painterly`, `digital`, `pixel`, `chalk`
 - **Text**: `none`, `title-only` (default), `title-subtitle`, `text-rich`
 - **Mood**: `subtle`, `balanced` (default), `bold`
-
-Available styles: `elegant` (default), `blueprint`, `bold-editorial`, `chalkboard`, `dark-atmospheric`, `editorial-infographic`, `fantasy-animation`, `flat-doodle`, `intuition-machine`, `minimal`, `nature`, `notion`, `pixel-art`, `playful`, `retro`, `sketch-notes`, `vector-illustration`, `vintage`, `warm`, `watercolor`
-
-**Style Previews**:
-
-| | | |
-|:---:|:---:|:---:|
-| ![elegant](./screenshots/cover-image-styles/elegant.webp) | ![blueprint](./screenshots/cover-image-styles/blueprint.webp) | ![bold-editorial](./screenshots/cover-image-styles/bold-editorial.webp) |
-| elegant | blueprint | bold-editorial |
-| ![chalkboard](./screenshots/cover-image-styles/chalkboard.webp) | ![dark-atmospheric](./screenshots/cover-image-styles/dark-atmospheric.webp) | ![editorial-infographic](./screenshots/cover-image-styles/editorial-infographic.webp) |
-| chalkboard | dark-atmospheric | editorial-infographic |
-| ![fantasy-animation](./screenshots/cover-image-styles/fantasy-animation.webp) | ![intuition-machine](./screenshots/cover-image-styles/intuition-machine.webp) | ![minimal](./screenshots/cover-image-styles/minimal.webp) |
-| fantasy-animation | intuition-machine | minimal |
-| ![nature](./screenshots/cover-image-styles/nature.webp) | ![notion](./screenshots/cover-image-styles/notion.webp) | ![pixel-art](./screenshots/cover-image-styles/pixel-art.webp) |
-| nature | notion | pixel-art |
-| ![playful](./screenshots/cover-image-styles/playful.webp) | ![retro](./screenshots/cover-image-styles/retro.webp) | ![sketch-notes](./screenshots/cover-image-styles/sketch-notes.webp) |
-| playful | retro | sketch-notes |
-| ![vector-illustration](./screenshots/cover-image-styles/vector-illustration.webp) | ![vintage](./screenshots/cover-image-styles/vintage.webp) | ![warm](./screenshots/cover-image-styles/warm.webp) |
-| vector-illustration | vintage | warm |
-| ![watercolor](./screenshots/cover-image-styles/watercolor.webp) | ![flat-doodle](./screenshots/cover-image-styles/flat-doodle.webp) | |
-| watercolor | flat-doodle | |
 
 #### baoyu-slide-deck
 
@@ -536,12 +519,12 @@ Post content and articles to X (Twitter). Supports regular posts with images and
 
 Post content to WeChat Official Account (微信公众号). Two modes available:
 
-**Image-Text (图文)** - Multiple images with short title/content:
+**Image-Text (贴图)** - Multiple images with short title/content:
 
 ```bash
-/baoyu-post-to-wechat 图文 --markdown article.md --images ./photos/
-/baoyu-post-to-wechat 图文 --markdown article.md --image img1.png --image img2.png --image img3.png
-/baoyu-post-to-wechat 图文 --title "标题" --content "内容" --image img1.png --submit
+/baoyu-post-to-wechat 贴图 --markdown article.md --images ./photos/
+/baoyu-post-to-wechat 贴图 --markdown article.md --image img1.png --image img2.png --image img3.png
+/baoyu-post-to-wechat 贴图 --title "标题" --content "内容" --image img1.png --submit
 ```
 
 **Article (文章)** - Full markdown/HTML with rich formatting:
@@ -552,7 +535,64 @@ Post content to WeChat Official Account (微信公众号). Two modes available:
 /baoyu-post-to-wechat 文章 --html article.html
 ```
 
-Prerequisites: Google Chrome installed. First run requires QR code login (session preserved).
+**Publishing Methods**:
+
+| Method | Speed | Requirements |
+|--------|-------|--------------|
+| API (Recommended) | Fast | API credentials |
+| Browser | Slow | Chrome, login session |
+
+**API Configuration** (for faster publishing):
+
+```bash
+# Add to .baoyu-skills/.env (project-level) or ~/.baoyu-skills/.env (user-level)
+WECHAT_APP_ID=your_app_id
+WECHAT_APP_SECRET=your_app_secret
+```
+
+To obtain credentials:
+1. Visit https://developers.weixin.qq.com/platform/
+2. Go to: 我的业务 → 公众号 → 开发密钥
+3. Create development key and copy AppID/AppSecret
+4. Add your machine's IP to the whitelist
+
+**Browser Method** (no API setup needed): Requires Google Chrome. First run opens browser for QR code login (session preserved).
+
+#### baoyu-post-to-weibo
+
+Post content to Weibo (微博). Supports regular posts with text, images, and videos, and headline articles (头条文章) with Markdown input. Uses real Chrome with CDP to bypass anti-automation.
+
+**Regular Posts** - Text + images/videos (max 18 files):
+
+```bash
+# Post with text
+/baoyu-post-to-weibo "Hello Weibo!"
+
+# Post with images
+/baoyu-post-to-weibo "Check this out" --image photo.png
+
+# Post with video
+/baoyu-post-to-weibo "Watch this" --video clip.mp4
+```
+
+**Headline Articles (头条文章)** - Long-form Markdown:
+
+```bash
+# Publish article
+/baoyu-post-to-weibo --article article.md
+
+# With cover image
+/baoyu-post-to-weibo --article article.md --cover cover.jpg
+```
+
+**Article Options**:
+| Option | Description |
+|--------|-------------|
+| `--cover <path>` | Cover image |
+| `--title <text>` | Override title (max 32 chars) |
+| `--summary <text>` | Override summary (max 44 chars) |
+
+**Note**: Scripts fill content into the browser. User reviews and publishes manually. First run requires manual Weibo login (session persists).
 
 ### AI Generation Skills
 
@@ -560,7 +600,7 @@ AI-powered generation backends.
 
 #### baoyu-image-gen
 
-AI SDK-based image generation using official OpenAI and Google APIs. Supports text-to-image, reference images, aspect ratios, and quality presets.
+AI SDK-based image generation using official OpenAI, Google and DashScope (Aliyun Tongyi Wanxiang) APIs. Supports text-to-image, reference images, aspect ratios, and quality presets.
 
 ```bash
 # Basic generation (auto-detect provider)
@@ -575,6 +615,9 @@ AI SDK-based image generation using official OpenAI and Google APIs. Supports te
 # Specific provider
 /baoyu-image-gen --prompt "A cat" --image cat.png --provider openai
 
+# DashScope (Aliyun Tongyi Wanxiang)
+/baoyu-image-gen --prompt "一只可爱的猫" --image cat.png --provider dashscope
+
 # With reference images (Google multimodal only)
 /baoyu-image-gen --prompt "Make it blue" --image out.png --ref source.png
 ```
@@ -585,7 +628,7 @@ AI SDK-based image generation using official OpenAI and Google APIs. Supports te
 | `--prompt`, `-p` | Prompt text |
 | `--promptfiles` | Read prompt from files (concatenated) |
 | `--image` | Output image path (required) |
-| `--provider` | `google` or `openai` (default: google) |
+| `--provider` | `google`, `openai` or `dashscope` (default: google) |
 | `--model`, `-m` | Model ID |
 | `--ar` | Aspect ratio (e.g., `16:9`, `1:1`, `4:3`) |
 | `--size` | Size (e.g., `1024x1024`) |
@@ -597,15 +640,18 @@ AI SDK-based image generation using official OpenAI and Google APIs. Supports te
 |----------|-------------|---------|
 | `OPENAI_API_KEY` | OpenAI API key | - |
 | `GOOGLE_API_KEY` | Google API key | - |
+| `DASHSCOPE_API_KEY` | DashScope API key (Aliyun) | - |
 | `OPENAI_IMAGE_MODEL` | OpenAI model | `gpt-image-1.5` |
 | `GOOGLE_IMAGE_MODEL` | Google model | `gemini-3-pro-image-preview` |
+| `DASHSCOPE_IMAGE_MODEL` | DashScope model | `z-image-turbo` |
 | `OPENAI_BASE_URL` | Custom OpenAI endpoint | - |
 | `GOOGLE_BASE_URL` | Custom Google endpoint | - |
+| `DASHSCOPE_BASE_URL` | Custom DashScope endpoint | - |
 
 **Provider Auto-Selection**:
 1. If `--provider` specified → use it
 2. If only one API key available → use that provider
-3. If both available → default to Google
+3. If multiple available → default to Google
 
 #### baoyu-danger-gemini-web
 
@@ -631,7 +677,7 @@ Utility tools for content processing.
 
 #### baoyu-url-to-markdown
 
-Fetch any URL via Chrome CDP and convert to clean markdown. Supports two capture modes for different scenarios.
+Fetch any URL via Chrome CDP and convert to clean markdown. Saves rendered HTML snapshot alongside the markdown, and automatically falls back to a legacy extractor when Defuddle fails.
 
 ```bash
 # Auto mode (default) - capture when page loads
@@ -671,6 +717,9 @@ Converts X (Twitter) content to markdown format. Supports tweet threads and X Ar
 
 # JSON output
 /baoyu-danger-x-to-markdown https://x.com/username/status/123456 --json
+
+# Download media (images/videos) to local files
+/baoyu-danger-x-to-markdown https://x.com/username/status/123456 --download-media
 ```
 
 **Supported URLs:**
@@ -688,6 +737,123 @@ Compress images to reduce file size while maintaining quality.
 /baoyu-compress-image path/to/image.png
 /baoyu-compress-image path/to/images/ --quality 80
 ```
+
+#### baoyu-format-markdown
+
+Format plain text or markdown files with proper frontmatter, titles, summaries, headings, bold, lists, and code blocks.
+
+```bash
+# Format a markdown file
+/baoyu-format-markdown path/to/article.md
+
+# Format with specific output
+/baoyu-format-markdown path/to/draft.md
+```
+
+**Workflow**:
+1. Read source file and analyze content structure
+2. Check/create YAML frontmatter (title, slug, summary, coverImage)
+3. Handle title: use existing, extract from H1, or generate candidates
+4. Apply formatting: headings, bold, lists, code blocks, quotes
+5. Save to `{filename}-formatted.md`
+6. Run typography script: ASCII→fullwidth quotes, CJK spacing, autocorrect
+
+**Frontmatter Fields**:
+| Field | Processing |
+|-------|------------|
+| `title` | Use existing, extract H1, or generate candidates |
+| `slug` | Infer from file path or generate from title |
+| `summary` | Generate engaging summary (100-150 chars) |
+| `coverImage` | Check for `imgs/cover.png` in same directory |
+
+**Formatting Rules**:
+| Element | Format |
+|---------|--------|
+| Titles | `#`, `##`, `###` hierarchy |
+| Key points | `**bold**` |
+| Parallel items | `-` unordered or `1.` ordered lists |
+| Code/commands | `` `inline` `` or ` ```block``` ` |
+| Quotes | `>` blockquote |
+
+#### baoyu-translate
+
+Translate articles and documents between languages with three modes: quick (direct), normal (analysis-informed), and refined (full publication-quality workflow with review and polish).
+
+```bash
+# Normal mode (default) - analyze then translate
+/translate article.md --to zh-CN
+
+# Quick mode - direct translation
+/translate article.md --mode quick --to ja
+
+# Refined mode - full workflow with review and polish
+/translate article.md --mode refined --to zh-CN
+
+# Translate a URL
+/translate https://example.com/article --to zh-CN
+
+# Specify audience
+/translate article.md --to zh-CN --audience technical
+
+# Specify style
+/translate article.md --to zh-CN --style humorous
+
+# With additional glossary
+/translate article.md --to zh-CN --glossary my-terms.md
+```
+
+**Options**:
+| Option | Description |
+|--------|-------------|
+| `<source>` | File path, URL, or inline text |
+| `--mode <mode>` | `quick`, `normal` (default), `refined` |
+| `--from <lang>` | Source language (auto-detect if omitted) |
+| `--to <lang>` | Target language (default: `zh-CN`) |
+| `--audience <type>` | Target reader profile (default: `general`) |
+| `--style <style>` | Translation style (default: `storytelling`) |
+| `--glossary <file>` | Additional glossary file |
+
+**Modes**:
+| Mode | Steps | Use Case |
+|------|-------|----------|
+| Quick | Translate | Short texts, informal content |
+| Normal | Analyze → Translate | Articles, blog posts |
+| Refined | Analyze → Translate → Review → Polish | Publication-quality documents |
+
+After normal mode completes, you can reply "继续润色" or "refine" to continue with review and polish steps.
+
+**Audience Presets**:
+| Value | Description |
+|-------|-------------|
+| `general` | General readers (default) — plain language, more translator's notes |
+| `technical` | Developers / engineers — less annotation on common tech terms |
+| `academic` | Researchers / scholars — formal register, precise terminology |
+| `business` | Business professionals — business-friendly tone |
+
+Custom audience descriptions are also accepted, e.g., `--audience "AI-interested general readers"`.
+
+**Style Presets**:
+| Value | Description |
+|-------|-------------|
+| `storytelling` | Engaging narrative flow (default) — smooth transitions, vivid phrasing |
+| `formal` | Professional, structured — neutral tone, no colloquialisms |
+| `technical` | Precise, documentation-style — concise, terminology-heavy |
+| `literal` | Close to original structure — minimal restructuring |
+| `academic` | Scholarly, rigorous — formal register, complex clauses OK |
+| `business` | Concise, results-focused — action-oriented, executive-friendly |
+| `humorous` | Preserves and adapts humor — witty, recreates comedic effect |
+| `conversational` | Casual, spoken-like — friendly, as if explaining to a friend |
+| `elegant` | Literary, polished prose — aesthetically refined, carefully crafted |
+
+Custom style descriptions are also accepted, e.g., `--style "poetic and lyrical"`.
+
+**Features**:
+- Custom glossaries via EXTEND.md with built-in EN→ZH glossary
+- Audience-aware translation with adjustable annotation depth
+- Automatic chunking for long documents (4000+ words) with parallel subagent translation
+- Figurative language interpreted by meaning, not word-for-word
+- Translator's notes for cultural/domain-specific references
+- Output directory with all intermediate files preserved
 
 ## Environment Configuration
 
@@ -716,6 +882,11 @@ OPENAI_IMAGE_MODEL=gpt-image-1.5
 GOOGLE_API_KEY=xxx
 GOOGLE_IMAGE_MODEL=gemini-3-pro-image-preview
 # GOOGLE_BASE_URL=https://generativelanguage.googleapis.com/v1beta
+
+# DashScope (Aliyun Tongyi Wanxiang)
+DASHSCOPE_API_KEY=sk-xxx
+DASHSCOPE_IMAGE_MODEL=z-image-turbo
+# DASHSCOPE_BASE_URL=https://dashscope.aliyuncs.com/api/v1
 EOF
 ```
 
@@ -744,13 +915,14 @@ mkdir -p .baoyu-skills/baoyu-cover-image
 Then create `.baoyu-skills/baoyu-cover-image/EXTEND.md`:
 
 ```markdown
-## Custom Styles
+## Custom Palettes
 
-### brand
-- Primary color: #1a73e8
-- Secondary color: #34a853
-- Font style: Modern sans-serif
-- Always include company logo watermark
+### corporate-tech
+- Primary colors: #1a73e8, #4A90D9
+- Background: #F5F7FA
+- Accent colors: #00B4D8, #48CAE4
+- Decorative hints: Clean lines, subtle gradients
+- Best for: SaaS, enterprise, technical
 ```
 
 The extension content will be loaded before skill execution and override defaults.

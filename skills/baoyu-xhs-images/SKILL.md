@@ -1,6 +1,6 @@
 ---
 name: baoyu-xhs-images
-description: Generates Xiaohongshu (Little Red Book) infographic series with 9 visual styles and 6 layouts. Breaks content into 1-10 cartoon-style images optimized for XHS engagement. Use when user mentions "小红书图片", "XHS images", "RedNote infographics", "小红书种草", or wants social media infographics for Chinese platforms.
+description: Generates Xiaohongshu (Little Red Book) infographic series with 10 visual styles and 8 layouts. Breaks content into 1-10 cartoon-style images optimized for XHS engagement. Use when user mentions "小红书图片", "XHS images", "RedNote infographics", "小红书种草", or wants social media infographics for Chinese platforms.
 ---
 
 # Xiaohongshu Infographic Series Generator
@@ -42,8 +42,8 @@ Break down complex content into eye-catching infographic series for Xiaohongshu 
 
 | Dimension | Controls | Options |
 |-----------|----------|---------|
-| **Style** | Visual aesthetics: colors, lines, decorations | cute, fresh, warm, bold, minimal, retro, pop, notion, chalkboard |
-| **Layout** | Information structure: density, arrangement | sparse, balanced, dense, list, comparison, flow |
+| **Style** | Visual aesthetics: colors, lines, decorations | cute, fresh, warm, bold, minimal, retro, pop, notion, chalkboard, study-notes |
+| **Layout** | Information structure: density, arrangement | sparse, balanced, dense, list, comparison, flow, mindmap, quadrant |
 
 Style × Layout can be freely combined. Example: `--style notion --layout dense` creates an intellectual-looking knowledge card with high information density.
 
@@ -60,6 +60,7 @@ Style × Layout can be freely combined. Example: `--style notion --layout dense`
 | `pop` | Vibrant, energetic, eye-catching |
 | `notion` | Minimalist hand-drawn line art, intellectual |
 | `chalkboard` | Colorful chalk on black board, educational |
+| `study-notes` | Realistic handwritten photo style, blue pen + red annotations + yellow highlighter |
 
 Detailed style definitions: `references/presets/<style>.md`
 
@@ -73,6 +74,8 @@ Detailed style definitions: `references/presets/<style>.md`
 | `list` | Enumeration and ranking format (4-7 items) |
 | `comparison` | Side-by-side contrast layout |
 | `flow` | Process and timeline layout (3-6 steps) |
+| `mindmap` | Center radial mind map layout (4-8 branches) |
+| `quadrant` | Four-quadrant / circular section layout |
 
 Detailed layout definitions: `references/elements/canvas.md`
 
@@ -89,6 +92,7 @@ Detailed layout definitions: `references/elements/canvas.md`
 | Fun, exciting, wow, amazing | `pop` | sparse/list |
 | Knowledge, concept, productivity, SaaS | `notion` | dense/list |
 | Education, tutorial, learning, teaching, classroom | `chalkboard` | balanced/dense |
+| Notes, handwritten, study guide, knowledge, realistic, photo | `study-notes` | dense/list/mindmap |
 
 ## Outline Strategies
 
@@ -164,7 +168,9 @@ Copy and track progress:
 
 ```
 XHS Infographic Progress:
-- [ ] Step 0: Check preferences (EXTEND.md) ⚠️ REQUIRED if not found
+- [ ] Step 0: Check preferences (EXTEND.md) ⛔ BLOCKING
+  - [ ] Found → load preferences → continue
+  - [ ] Not found → run first-time setup → MUST complete before Step 1
 - [ ] Step 1: Analyze content → analysis.md
 - [ ] Step 2: Confirmation 1 - Content understanding ⚠️ REQUIRED
 - [ ] Step 3: Generate 3 outline + style variants
@@ -176,21 +182,35 @@ XHS Infographic Progress:
 ### Flow
 
 ```
-Input → Analyze → [Confirm 1] → 3 Outlines → [Confirm 2: Outline + Style + Elements] → Generate → Complete
+Input → [Step 0: Preferences] ─┬─ Found → Continue
+                               │
+                               └─ Not found → First-Time Setup ⛔ BLOCKING
+                                              │
+                                              └─ Complete setup → Save EXTEND.md → Continue
+                                                                                      │
+        ┌───────────────────────────────────────────────────────────────────────────┘
+        ↓
+Analyze → [Confirm 1] → 3 Outlines → [Confirm 2: Outline + Style + Elements] → Generate → Complete
 ```
 
-### Step 0: Load Preferences (EXTEND.md) ⚠️
+### Step 0: Load Preferences (EXTEND.md) ⛔ BLOCKING
 
-**Purpose**: Load user preferences or run first-time setup. **Do NOT skip setup if EXTEND.md not found.**
+**Purpose**: Load user preferences or run first-time setup.
 
-Use Bash to check EXTEND.md existence (priority order):
+**CRITICAL**: If EXTEND.md not found, MUST complete first-time setup before ANY other questions or steps. Do NOT proceed to content analysis, do NOT ask about style, do NOT ask about layout — ONLY complete the preferences setup first.
+
+Check EXTEND.md existence (priority order):
 
 ```bash
-# Check project-level first
+# macOS, Linux, WSL, Git Bash
 test -f .baoyu-skills/baoyu-xhs-images/EXTEND.md && echo "project"
-
-# Then user-level (cross-platform: $HOME works on macOS/Linux/WSL)
 test -f "$HOME/.baoyu-skills/baoyu-xhs-images/EXTEND.md" && echo "user"
+```
+
+```powershell
+# PowerShell (Windows)
+if (Test-Path .baoyu-skills/baoyu-xhs-images/EXTEND.md) { "project" }
+if (Test-Path "$HOME/.baoyu-skills/baoyu-xhs-images/EXTEND.md") { "user" }
 ```
 
 ┌────────────────────────────────────────────────────┬───────────────────┐
@@ -201,13 +221,13 @@ test -f "$HOME/.baoyu-skills/baoyu-xhs-images/EXTEND.md" && echo "user"
 │ $HOME/.baoyu-skills/baoyu-xhs-images/EXTEND.md     │ User home         │
 └────────────────────────────────────────────────────┴───────────────────┘
 
-┌───────────┬───────────────────────────────────────────────────────────────────────────┐
-│  Result   │                                  Action                                   │
-├───────────┼───────────────────────────────────────────────────────────────────────────┤
-│ Found     │ Read, parse, display summary → Continue to Step 1                         │
-├───────────┼───────────────────────────────────────────────────────────────────────────┤
-│ Not found │ ⚠️ MUST run first-time setup (see below) → Then continue to Step 1        │
-└───────────┴───────────────────────────────────────────────────────────────────────────┘
+┌───────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  Result   │                                              Action                                              │
+├───────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Found     │ Read, parse, display summary → Continue to Step 1                                                 │
+├───────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Not found │ ⛔ BLOCKING: Run first-time setup ONLY (see below) → Complete and save EXTEND.md → Then Step 1    │
+└───────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────┘
 
 **First-Time Setup** (when EXTEND.md not found):
 
@@ -227,6 +247,7 @@ Read source content, save it if needed, and perform deep analysis.
 1. **Save source content** (if not already a file):
    - If user provides a file path: use as-is
    - If user pastes content: save to `source.md` in target directory
+   - **Backup rule**: If `source.md` exists, rename to `source-backup-YYYYMMDD-HHMMSS.md`
 2. Read source content
 3. **Deep analysis** following `references/workflows/analysis-framework.md`:
    - Content type classification (种草/干货/测评/教程/避坑...)
@@ -351,9 +372,22 @@ Display the selected style's default elements from preset, then ask:
 
 With confirmed outline + style + layout:
 
+**Visual Consistency — Reference Image Chain**:
+To ensure character/style consistency across all images in a series:
+1. **Generate image 1 (cover) FIRST** — without `--ref`
+2. **Use image 1 as `--ref` for ALL remaining images** (2, 3, ..., N)
+   - This anchors the character design, color rendering, and illustration style
+   - Command pattern: `--ref <path-to-image-01.png>` added to every subsequent generation
+
+This is critical for styles that use recurring characters, mascots, or illustration elements. Image 1 becomes the visual anchor for the entire series.
+
 **For each image (cover + content + ending)**:
 1. Save prompt to `prompts/NN-{type}-[slug].md` (in user's preferred language)
-2. Generate image using confirmed style and layout
+   - **Backup rule**: If prompt file exists, rename to `prompts/NN-{type}-[slug]-backup-YYYYMMDD-HHMMSS.md`
+2. Generate image:
+   - **Image 1**: Generate without `--ref` (this establishes the visual anchor)
+   - **Images 2+**: Generate with `--ref <image-01-path>` for consistency
+   - **Backup rule**: If image file exists, rename to `NN-{type}-[slug]-backup-YYYYMMDD-HHMMSS.png`
 3. Report progress after each generation
 
 **Watermark Application** (if enabled in preferences):
@@ -372,7 +406,7 @@ Reference: `references/config/watermark-guide.md`
 If image generation skill supports `--sessionId`:
 1. Generate unique session ID: `xhs-{topic-slug}-{timestamp}`
 2. Use same session ID for all images
-3. Ensures visual consistency across generated images
+3. Combined with reference image chain, ensures maximum visual consistency
 
 ### Step 6: Completion Report
 
@@ -403,9 +437,11 @@ Files:
 
 | Action | Steps |
 |--------|-------|
-| **Edit** | Update prompt → Regenerate with same session ID |
+| **Edit** | **Update prompt file FIRST** → Regenerate with same session ID |
 | **Add** | Specify position → Create prompt → Generate → Renumber subsequent files (NN+1) → Update outline |
 | **Delete** | Remove files → Renumber subsequent (NN-1) → Update outline |
+
+**IMPORTANT**: When updating images, ALWAYS update the prompt file (`prompts/NN-{type}-[slug].md`) FIRST before regenerating. This ensures changes are documented and reproducible.
 
 ## Content Breakdown Principles
 
@@ -415,17 +451,18 @@ Files:
 
 **Style × Layout Matrix** (✓✓ = highly recommended, ✓ = works well):
 
-| | sparse | balanced | dense | list | comparison | flow |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| cute | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓ | ✓ |
-| fresh | ✓✓ | ✓✓ | ✓ | ✓ | ✓ | ✓✓ |
-| warm | ✓✓ | ✓✓ | ✓ | ✓ | ✓✓ | ✓ |
-| bold | ✓✓ | ✓ | ✓ | ✓✓ | ✓✓ | ✓ |
-| minimal | ✓✓ | ✓✓ | ✓✓ | ✓ | ✓ | ✓ |
-| retro | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓ | ✓ |
-| pop | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓✓ | ✓ |
-| notion | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ |
-| chalkboard | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓ | ✓✓ |
+| | sparse | balanced | dense | list | comparison | flow | mindmap | quadrant |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| cute | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓ | ✓ | ✓ | ✓ |
+| fresh | ✓✓ | ✓✓ | ✓ | ✓ | ✓ | ✓✓ | ✓ | ✓ |
+| warm | ✓✓ | ✓✓ | ✓ | ✓ | ✓✓ | ✓ | ✓ | ✓ |
+| bold | ✓✓ | ✓ | ✓ | ✓✓ | ✓✓ | ✓ | ✓ | ✓✓ |
+| minimal | ✓✓ | ✓✓ | ✓✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| retro | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓ | ✓ | ✓ | ✓ |
+| pop | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓✓ | ✓ | ✓ | ✓ |
+| notion | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ |
+| chalkboard | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓✓ | ✓ |
+| study-notes | ✗ | ✓ | ✓✓ | ✓✓ | ✓ | ✓ | ✓✓ | ✓ |
 
 ## References
 

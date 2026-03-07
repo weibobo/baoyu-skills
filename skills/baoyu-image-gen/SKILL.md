@@ -1,68 +1,85 @@
 ---
 name: baoyu-image-gen
-description: AI image generation with OpenAI and Google APIs. Supports text-to-image, reference images, aspect ratios, and parallel generation (recommended 4 concurrent subagents). Use when user asks to generate, create, or draw images.
+description: AI image generation with OpenAI, Google, DashScope and Replicate APIs. Supports text-to-image, reference images, aspect ratios. Sequential by default; parallel generation available on request. Use when user asks to generate, create, or draw images.
 ---
 
 # Image Generation (AI SDK)
 
-Official API-based image generation. Supports OpenAI and Google providers.
+Official API-based image generation. Supports OpenAI, Google, DashScope (阿里通义万象) and Replicate providers.
 
 ## Script Directory
 
 **Agent Execution**:
 1. `SKILL_DIR` = this SKILL.md file's directory
 2. Script path = `${SKILL_DIR}/scripts/main.ts`
+3. Resolve `${BUN_X}` runtime: if `bun` installed → `bun`; if `npx` available → `npx -y bun`; else suggest installing bun
 
-## Preferences (EXTEND.md)
+## Step 0: Load Preferences ⛔ BLOCKING
 
-Use Bash to check EXTEND.md existence (priority order):
+**CRITICAL**: This step MUST complete BEFORE any image generation. Do NOT skip or defer.
+
+Check EXTEND.md existence (priority: project → user):
 
 ```bash
-# Check project-level first
+# macOS, Linux, WSL, Git Bash
 test -f .baoyu-skills/baoyu-image-gen/EXTEND.md && echo "project"
-
-# Then user-level (cross-platform: $HOME works on macOS/Linux/WSL)
 test -f "$HOME/.baoyu-skills/baoyu-image-gen/EXTEND.md" && echo "user"
 ```
 
-┌──────────────────────────────────────────────────┬───────────────────┐
-│                       Path                       │     Location      │
-├──────────────────────────────────────────────────┼───────────────────┤
-│ .baoyu-skills/baoyu-image-gen/EXTEND.md          │ Project directory │
-├──────────────────────────────────────────────────┼───────────────────┤
-│ $HOME/.baoyu-skills/baoyu-image-gen/EXTEND.md    │ User home         │
-└──────────────────────────────────────────────────┴───────────────────┘
+```powershell
+# PowerShell (Windows)
+if (Test-Path .baoyu-skills/baoyu-image-gen/EXTEND.md) { "project" }
+if (Test-Path "$HOME/.baoyu-skills/baoyu-image-gen/EXTEND.md") { "user" }
+```
 
-┌───────────┬───────────────────────────────────────────────────────────────────────────┐
-│  Result   │                                  Action                                   │
-├───────────┼───────────────────────────────────────────────────────────────────────────┤
-│ Found     │ Read, parse, apply settings                                               │
-├───────────┼───────────────────────────────────────────────────────────────────────────┤
-│ Not found │ Use defaults                                                              │
-└───────────┴───────────────────────────────────────────────────────────────────────────┘
+| Result | Action |
+|--------|--------|
+| Found | Load, parse, apply settings. If `default_model.[provider]` is null → ask model only (Flow 2) |
+| Not found | ⛔ Run first-time setup ([references/config/first-time-setup.md](references/config/first-time-setup.md)) → Save EXTEND.md → Then continue |
 
-**EXTEND.md Supports**: Default provider | Default quality | Default aspect ratio
+**CRITICAL**: If not found, complete the full setup (provider + model + quality + save location) using AskUserQuestion BEFORE generating any images. Generation is BLOCKED until EXTEND.md is created.
+
+| Path | Location |
+|------|----------|
+| `.baoyu-skills/baoyu-image-gen/EXTEND.md` | Project directory |
+| `$HOME/.baoyu-skills/baoyu-image-gen/EXTEND.md` | User home |
+
+**EXTEND.md Supports**: Default provider | Default quality | Default aspect ratio | Default image size | Default models
+
+Schema: `references/config/preferences-schema.md`
 
 ## Usage
 
 ```bash
 # Basic
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image cat.png
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image cat.png
 
 # With aspect ratio
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "A landscape" --image out.png --ar 16:9
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "A landscape" --image out.png --ar 16:9
 
 # High quality
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image out.png --quality 2k
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image out.png --quality 2k
 
 # From prompt files
-npx -y bun ${SKILL_DIR}/scripts/main.ts --promptfiles system.md content.md --image out.png
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --promptfiles system.md content.md --image out.png
 
-# With reference images (Google multimodal only)
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "Make blue" --image out.png --ref source.png
+# With reference images (Google multimodal or OpenAI edits)
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "Make blue" --image out.png --ref source.png
+
+# With reference images (explicit provider/model)
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "Make blue" --image out.png --provider google --model gemini-3-pro-image-preview --ref source.png
 
 # Specific provider
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image out.png --provider openai
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image out.png --provider openai
+
+# DashScope (阿里通义万象)
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "一只可爱的猫" --image out.png --provider dashscope
+
+# Replicate (google/nano-banana-pro)
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image out.png --provider replicate
+
+# Replicate with specific model
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image out.png --provider replicate --model google/nano-banana
 ```
 
 ## Options
@@ -72,13 +89,13 @@ npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image out.png --provi
 | `--prompt <text>`, `-p` | Prompt text |
 | `--promptfiles <files...>` | Read prompt from files (concatenated) |
 | `--image <path>` | Output image path (required) |
-| `--provider google\|openai` | Force provider (default: google) |
-| `--model <id>`, `-m` | Model ID |
+| `--provider google\|openai\|dashscope\|replicate` | Force provider (default: google) |
+| `--model <id>`, `-m` | Model ID (Google: `gemini-3-pro-image-preview`, `gemini-3.1-flash-image-preview`; OpenAI: `gpt-image-1.5`) |
 | `--ar <ratio>` | Aspect ratio (e.g., `16:9`, `1:1`, `4:3`) |
 | `--size <WxH>` | Size (e.g., `1024x1024`) |
 | `--quality normal\|2k` | Quality preset (default: 2k) |
 | `--imageSize 1K\|2K\|4K` | Image size for Google (default: from quality) |
-| `--ref <files...>` | Reference images (Google multimodal only) |
+| `--ref <files...>` | Reference images. Supported by Google multimodal (`gemini-3-pro-image-preview`, `gemini-3-flash-preview`, `gemini-3.1-flash-image-preview`) and OpenAI edits (GPT Image models). If provider omitted: Google first, then OpenAI |
 | `--n <count>` | Number of images |
 | `--json` | JSON output |
 
@@ -88,18 +105,57 @@ npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image out.png --provi
 |----------|-------------|
 | `OPENAI_API_KEY` | OpenAI API key |
 | `GOOGLE_API_KEY` | Google API key |
+| `DASHSCOPE_API_KEY` | DashScope API key (阿里云) |
+| `REPLICATE_API_TOKEN` | Replicate API token |
 | `OPENAI_IMAGE_MODEL` | OpenAI model override |
 | `GOOGLE_IMAGE_MODEL` | Google model override |
+| `DASHSCOPE_IMAGE_MODEL` | DashScope model override (default: z-image-turbo) |
+| `REPLICATE_IMAGE_MODEL` | Replicate model override (default: google/nano-banana-pro) |
 | `OPENAI_BASE_URL` | Custom OpenAI endpoint |
 | `GOOGLE_BASE_URL` | Custom Google endpoint |
+| `DASHSCOPE_BASE_URL` | Custom DashScope endpoint |
+| `REPLICATE_BASE_URL` | Custom Replicate endpoint |
 
-**Load Priority**: CLI args > env vars > `<cwd>/.baoyu-skills/.env` > `~/.baoyu-skills/.env`
+**Load Priority**: CLI args > EXTEND.md > env vars > `<cwd>/.baoyu-skills/.env` > `~/.baoyu-skills/.env`
+
+## Model Resolution
+
+Model priority (highest → lowest), applies to all providers:
+
+1. CLI flag: `--model <id>`
+2. EXTEND.md: `default_model.[provider]`
+3. Env var: `<PROVIDER>_IMAGE_MODEL` (e.g., `GOOGLE_IMAGE_MODEL`)
+4. Built-in default
+
+**EXTEND.md overrides env vars**. If both EXTEND.md `default_model.google: "gemini-3-pro-image-preview"` and env var `GOOGLE_IMAGE_MODEL=gemini-3.1-flash-image-preview` exist, EXTEND.md wins.
+
+**Agent MUST display model info** before each generation:
+- Show: `Using [provider] / [model]`
+- Show switch hint: `Switch model: --model <id> | EXTEND.md default_model.[provider] | env <PROVIDER>_IMAGE_MODEL`
+
+### Replicate Models
+
+Supported model formats:
+
+- `owner/name` (recommended for official models), e.g. `google/nano-banana-pro`
+- `owner/name:version` (community models by version), e.g. `stability-ai/sdxl:<version>`
+
+Examples:
+
+```bash
+# Use Replicate default model
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image out.png --provider replicate
+
+# Override model explicitly
+${BUN_X} ${SKILL_DIR}/scripts/main.ts --prompt "A cat" --image out.png --provider replicate --model google/nano-banana
+```
 
 ## Provider Selection
 
-1. `--provider` specified → use it
-2. Only one API key available → use that provider
-3. Both available → default to Google
+1. `--ref` provided + no `--provider` → auto-select Google first, then OpenAI, then Replicate
+2. `--provider` specified → use it (if `--ref`, must be `google`, `openai`, or `replicate`)
+3. Only one API key available → use that provider
+4. Multiple available → default to Google
 
 ## Quality Presets
 
@@ -118,31 +174,38 @@ Supported: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `2.35:1`
 - Google Imagen: uses `aspectRatio` parameter
 - OpenAI: maps to closest supported size
 
-## Parallel Generation
+## Generation Mode
 
-Supports concurrent image generation via background subagents for batch operations.
+**Default**: Sequential generation (one image at a time). This ensures stable output and easier debugging.
+
+**Parallel Generation**: Only use when user explicitly requests parallel/concurrent generation.
+
+| Mode | When to Use |
+|------|-------------|
+| Sequential (default) | Normal usage, single images, small batches |
+| Parallel | User explicitly requests, large batches (10+) |
+
+**Parallel Settings** (when requested):
 
 | Setting | Value |
 |---------|-------|
 | Recommended concurrency | 4 subagents |
 | Max concurrency | 8 subagents |
-| Use case | Batch generation (slides, comics, infographics) |
+| Use case | Large batch generation when user requests parallel |
 
-**Agent Implementation**:
+**Agent Implementation** (parallel mode only):
 ```
 # Launch multiple generations in parallel using Task tool
 # Each Task runs as background subagent with run_in_background=true
 # Collect results via TaskOutput when all complete
 ```
 
-**Best Practice**: When generating 4+ images, spawn background subagents (recommended 4 concurrent) instead of sequential execution.
-
 ## Error Handling
 
 - Missing API key → error with setup instructions
 - Generation failure → auto-retry once
 - Invalid aspect ratio → warning, proceed with default
-- Reference images with non-multimodal model → warning, ignore refs
+- Reference images with unsupported provider/model → error with fix hint (switch to Google multimodal: `gemini-3-pro-image-preview`, `gemini-3.1-flash-image-preview`; or OpenAI GPT Image edits)
 
 ## Extension Support
 

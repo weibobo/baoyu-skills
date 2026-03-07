@@ -15,6 +15,7 @@ Posts text, images, videos, and long-form articles to X via real Chrome browser 
 1. Determine this SKILL.md file's directory path as `SKILL_DIR`
 2. Script path = `${SKILL_DIR}/scripts/<script-name>.ts`
 3. Replace all `${SKILL_DIR}` in this document with the actual path
+4. Resolve `${BUN_X}` runtime: if `bun` installed → `bun`; if `npx` available → `npx -y bun`; else suggest installing bun
 
 **Script Reference**:
 | Script | Purpose |
@@ -26,17 +27,22 @@ Posts text, images, videos, and long-form articles to X via real Chrome browser 
 | `scripts/md-to-html.ts` | Markdown → HTML conversion |
 | `scripts/copy-to-clipboard.ts` | Copy content to clipboard |
 | `scripts/paste-from-clipboard.ts` | Send real paste keystroke |
+| `scripts/check-paste-permissions.ts` | Verify environment & permissions |
 
 ## Preferences (EXTEND.md)
 
-Use Bash to check EXTEND.md existence (priority order):
+Check EXTEND.md existence (priority order):
 
 ```bash
-# Check project-level first
+# macOS, Linux, WSL, Git Bash
 test -f .baoyu-skills/baoyu-post-to-x/EXTEND.md && echo "project"
-
-# Then user-level (cross-platform: $HOME works on macOS/Linux/WSL)
 test -f "$HOME/.baoyu-skills/baoyu-post-to-x/EXTEND.md" && echo "user"
+```
+
+```powershell
+# PowerShell (Windows)
+if (Test-Path .baoyu-skills/baoyu-post-to-x/EXTEND.md) { "project" }
+if (Test-Path "$HOME/.baoyu-skills/baoyu-post-to-x/EXTEND.md") { "user" }
 ```
 
 ┌──────────────────────────────────────────────────┬───────────────────┐
@@ -55,13 +61,35 @@ test -f "$HOME/.baoyu-skills/baoyu-post-to-x/EXTEND.md" && echo "user"
 │ Not found │ Use defaults                                                              │
 └───────────┴───────────────────────────────────────────────────────────────────────────┘
 
-**EXTEND.md Supports**: Default Chrome profile | Auto-submit preference
+**EXTEND.md Supports**: Default Chrome profile
 
 ## Prerequisites
 
 - Google Chrome or Chromium
 - `bun` runtime
 - First run: log in to X manually (session saved)
+
+## Pre-flight Check (Optional)
+
+Before first use, suggest running the environment check. User can skip if they prefer.
+
+```bash
+${BUN_X} ${SKILL_DIR}/scripts/check-paste-permissions.ts
+```
+
+Checks: Chrome, profile isolation, Bun, Accessibility, clipboard, paste keystroke, Chrome conflicts.
+
+**If any check fails**, provide fix guidance per item:
+
+| Check | Fix |
+|-------|-----|
+| Chrome | Install Chrome or set `X_BROWSER_CHROME_PATH` env var |
+| Profile dir | Shared profile at `baoyu-skills/chrome-profile` (see CLAUDE.md Chrome Profile section) |
+| Bun runtime | `brew install oven-sh/bun/bun` (macOS) or `npm install -g bun` |
+| Accessibility (macOS) | System Settings → Privacy & Security → Accessibility → enable terminal app |
+| Clipboard copy | Ensure Swift/AppKit available (macOS Xcode CLI tools: `xcode-select --install`) |
+| Paste keystroke (macOS) | Same as Accessibility fix above |
+| Paste keystroke (Linux) | Install `xdotool` (X11) or `ydotool` (Wayland) |
 
 ## References
 
@@ -75,8 +103,7 @@ test -f "$HOME/.baoyu-skills/baoyu-post-to-x/EXTEND.md" && echo "user"
 Text + up to 4 images.
 
 ```bash
-npx -y bun ${SKILL_DIR}/scripts/x-browser.ts "Hello!" --image ./photo.png          # Preview
-npx -y bun ${SKILL_DIR}/scripts/x-browser.ts "Hello!" --image ./photo.png --submit  # Post
+${BUN_X} ${SKILL_DIR}/scripts/x-browser.ts "Hello!" --image ./photo.png
 ```
 
 **Parameters**:
@@ -84,8 +111,9 @@ npx -y bun ${SKILL_DIR}/scripts/x-browser.ts "Hello!" --image ./photo.png --subm
 |-----------|-------------|
 | `<text>` | Post content (positional) |
 | `--image <path>` | Image file (repeatable, max 4) |
-| `--submit` | Post (default: preview) |
 | `--profile <dir>` | Custom Chrome profile |
+
+**Note**: Script opens browser with content filled in. User reviews and publishes manually.
 
 ---
 
@@ -94,8 +122,7 @@ npx -y bun ${SKILL_DIR}/scripts/x-browser.ts "Hello!" --image ./photo.png --subm
 Text + video file.
 
 ```bash
-npx -y bun ${SKILL_DIR}/scripts/x-video.ts "Check this out!" --video ./clip.mp4          # Preview
-npx -y bun ${SKILL_DIR}/scripts/x-video.ts "Amazing content" --video ./demo.mp4 --submit  # Post
+${BUN_X} ${SKILL_DIR}/scripts/x-video.ts "Check this out!" --video ./clip.mp4
 ```
 
 **Parameters**:
@@ -103,8 +130,9 @@ npx -y bun ${SKILL_DIR}/scripts/x-video.ts "Amazing content" --video ./demo.mp4 
 |-----------|-------------|
 | `<text>` | Post content (positional) |
 | `--video <path>` | Video file (MP4, MOV, WebM) |
-| `--submit` | Post (default: preview) |
 | `--profile <dir>` | Custom Chrome profile |
+
+**Note**: Script opens browser with content filled in. User reviews and publishes manually.
 
 **Limits**: Regular 140s max, Premium 60min. Processing: 30-60s.
 
@@ -115,8 +143,7 @@ npx -y bun ${SKILL_DIR}/scripts/x-video.ts "Amazing content" --video ./demo.mp4 
 Quote an existing tweet with comment.
 
 ```bash
-npx -y bun ${SKILL_DIR}/scripts/x-quote.ts https://x.com/user/status/123 "Great insight!"          # Preview
-npx -y bun ${SKILL_DIR}/scripts/x-quote.ts https://x.com/user/status/123 "I agree!" --submit       # Post
+${BUN_X} ${SKILL_DIR}/scripts/x-quote.ts https://x.com/user/status/123 "Great insight!"
 ```
 
 **Parameters**:
@@ -124,8 +151,9 @@ npx -y bun ${SKILL_DIR}/scripts/x-quote.ts https://x.com/user/status/123 "I agre
 |-----------|-------------|
 | `<tweet-url>` | URL to quote (positional) |
 | `<comment>` | Comment text (positional, optional) |
-| `--submit` | Post (default: preview) |
 | `--profile <dir>` | Custom Chrome profile |
+
+**Note**: Script opens browser with content filled in. User reviews and publishes manually.
 
 ---
 
@@ -134,9 +162,8 @@ npx -y bun ${SKILL_DIR}/scripts/x-quote.ts https://x.com/user/status/123 "I agre
 Long-form Markdown articles (requires X Premium).
 
 ```bash
-npx -y bun ${SKILL_DIR}/scripts/x-article.ts article.md                        # Preview
-npx -y bun ${SKILL_DIR}/scripts/x-article.ts article.md --cover ./cover.jpg    # With cover
-npx -y bun ${SKILL_DIR}/scripts/x-article.ts article.md --submit               # Publish
+${BUN_X} ${SKILL_DIR}/scripts/x-article.ts article.md
+${BUN_X} ${SKILL_DIR}/scripts/x-article.ts article.md --cover ./cover.jpg
 ```
 
 **Parameters**:
@@ -145,16 +172,35 @@ npx -y bun ${SKILL_DIR}/scripts/x-article.ts article.md --submit               #
 | `<markdown>` | Markdown file (positional) |
 | `--cover <path>` | Cover image |
 | `--title <text>` | Override title |
-| `--submit` | Publish (default: preview) |
 
 **Frontmatter**: `title`, `cover_image` supported in YAML front matter.
 
+**Note**: Script opens browser with article filled in. User reviews and publishes manually.
+
+**Post-Composition Check**: The script automatically verifies after all images are inserted:
+- Remaining `XIMGPH_` placeholders in editor content
+- Expected vs actual image count
+
+If the check fails (warnings in output), alert the user with the specific issues before they publish.
+
 ---
+
+## Troubleshooting
+
+### Chrome debug port not ready
+
+If a script fails with `Chrome debug port not ready` or `Unable to connect`, kill existing Chrome CDP instances first, then retry:
+
+```bash
+pkill -f "Chrome.*remote-debugging-port" 2>/dev/null; pkill -f "Chromium.*remote-debugging-port" 2>/dev/null; sleep 2
+```
+
+**Important**: This should be done automatically — when encountering this error, kill Chrome CDP instances and retry the command without asking the user.
 
 ## Notes
 
 - First run: manual login required (session persists)
-- Always preview before `--submit`
+- All scripts only fill content into the browser, user must review and publish manually
 - Cross-platform: macOS, Linux, Windows
 
 ## Extension Support

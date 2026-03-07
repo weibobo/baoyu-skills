@@ -12,8 +12,8 @@ Controls text density and information hierarchy on cover images.
 | Value | Title | Subtitle | Tags | Visual Area |
 |-------|:-----:|:--------:|:----:|:-----------:|
 | `none` | - | - | - | 100% |
-| `title-only` | ✓ (≤8字) | - | - | 85% |
-| `title-subtitle` | ✓ | ✓ (≤15字) | - | 75% |
+| `title-only` | ✓ | - | - | 85% |
+| `title-subtitle` | ✓ | ✓ | - | 75% |
 | `text-rich` | ✓ | ✓ | ✓ (2-4) | 60% |
 
 ## Detail
@@ -43,13 +43,13 @@ Single headline, maximum impact.
 - Strong brand recognition
 
 **Composition**:
-- Title: ≤8 characters, prominent
+- Title: prominent placement
 - Reserved zone: top or bottom 15%
 - Visual supports title message
 
 **Title Guidelines**:
-- Punchy, action-oriented
-- Numbers, questions, contrasts work well
+- Use exact title from source content or user-provided title
+- Do NOT invent or modify titles
 - Match content language
 
 ### title-subtitle
@@ -62,10 +62,14 @@ Title with supporting context.
 - Content with dual messages
 
 **Composition**:
-- Title: ≤8 characters, primary
-- Subtitle: ≤15 characters, secondary
+- Title: primary element
+- Subtitle: secondary element
 - Reserved zone: 25%
 - Clear hierarchy between title/subtitle
+
+**Title Guidelines**:
+- Use exact title from source content or user-provided title
+- Do NOT invent or modify titles
 
 **Subtitle Guidelines**:
 - Clarify or contextualize title
@@ -88,6 +92,10 @@ Information-dense cover with multiple text elements.
 - Tags: 2-4 keyword labels
 - Reserved zone: 40%
 - Clear visual hierarchy
+
+**Title Guidelines**:
+- Use exact title from source content or user-provided title
+- Do NOT invent or modify titles
 
 **Tag Guidelines**:
 - 2-4 tags maximum

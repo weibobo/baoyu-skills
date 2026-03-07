@@ -1,18 +1,20 @@
-# Image-Text Posting (图文发表)
+# Image-Text Posting (贴图发表, formerly 图文)
 
 Post image-text messages with multiple images to WeChat Official Account.
+
+> **Note**: WeChat has renamed "图文" to "贴图" in the Official Account menu (as of 2026).
 
 ## Usage
 
 ```bash
 # Post with images and markdown file (title/content extracted automatically)
-npx -y bun ./scripts/wechat-browser.ts --markdown source.md --images ./images/
+${BUN_X} ./scripts/wechat-browser.ts --markdown source.md --images ./images/
 
 # Post with explicit title and content
-npx -y bun ./scripts/wechat-browser.ts --title "标题" --content "内容" --image img1.png --image img2.png
+${BUN_X} ./scripts/wechat-browser.ts --title "标题" --content "内容" --image img1.png --image img2.png
 
 # Save as draft
-npx -y bun ./scripts/wechat-browser.ts --markdown source.md --images ./images/ --submit
+${BUN_X} ./scripts/wechat-browser.ts --markdown source.md --images ./images/ --submit
 ```
 
 ## Parameters

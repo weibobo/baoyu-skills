@@ -50,16 +50,16 @@ Just run `/release-skills` - auto-detects your project configuration.
 
 **Language Detection Rules**:
 
-| Filename Pattern | Language |
-|------------------|----------|
-| `CHANGELOG.md` (no suffix) | en (default) |
-| `CHANGELOG.zh.md` / `CHANGELOG_CN.md` / `CHANGELOG.zh-CN.md` | zh |
-| `CHANGELOG.ja.md` / `CHANGELOG_JP.md` | ja |
-| `CHANGELOG.ko.md` / `CHANGELOG_KR.md` | ko |
-| `CHANGELOG.de.md` / `CHANGELOG_DE.md` | de |
-| `CHANGELOG.fr.md` / `CHANGELOG_FR.md` | fr |
-| `CHANGELOG.es.md` / `CHANGELOG_ES.md` | es |
-| `CHANGELOG.{lang}.md` | Corresponding language code |
+Changelog files follow the pattern `CHANGELOG_{LANG}.md` or `CHANGELOG.{lang}.md`, where `{lang}` / `{LANG}` is a language or region code.
+
+| Pattern | Example | Language |
+|---------|---------|----------|
+| No suffix | `CHANGELOG.md` | en (default) |
+| `_{LANG}` (uppercase) | `CHANGELOG_CN.md`, `CHANGELOG_JP.md` | Corresponding language |
+| `.{lang}` (lowercase) | `CHANGELOG.zh.md`, `CHANGELOG.ja.md` | Corresponding language |
+| `.{lang-region}` | `CHANGELOG.zh-CN.md` | Corresponding region variant |
+
+Common language codes: `zh` (Chinese), `ja` (Japanese), `ko` (Korean), `de` (German), `fr` (French), `es` (Spanish).
 
 **Output Example**:
 ```
@@ -114,11 +114,17 @@ Display version change: `1.2.3 → 1.3.0`
 For each detected changelog file:
 
 1. **Identify language** from filename suffix
-2. **Generate content in that language**:
+2. **Detect third-party contributors**:
+   - Check merge commits: `git log ${LAST_TAG}..HEAD --merges --pretty=format:"%H %s"`
+   - For each merged PR, identify the PR author via `gh pr view <number> --json author --jq '.author.login'`
+   - Compare against repo owner (`gh repo view --json owner --jq '.owner.login'`)
+   - If PR author ≠ repo owner → third-party contributor
+3. **Generate content in that language**:
    - Section titles in target language
    - Change descriptions written naturally in target language (not translated)
    - Date format: YYYY-MM-DD (universal)
-3. **Insert at file head** (preserve existing content)
+   - **Third-party contributions**: Append contributor attribution `(by @username)` to the changelog entry
+4. **Insert at file head** (preserve existing content)
 
 **Section Title Translations** (built-in):
 
@@ -138,6 +144,7 @@ For each detected changelog file:
 
 ### Features
 - Description of new feature
+- Description of third-party contribution (by @username)
 
 ### Fixes
 - Description of fix
@@ -148,6 +155,12 @@ For each detected changelog file:
 
 Only include sections that have changes. Omit empty sections.
 
+**Third-Party Attribution Rules**:
+- Only add `(by @username)` for contributors who are NOT the repo owner
+- Use GitHub username with `@` prefix
+- Place at the end of the changelog entry line
+- Apply to all languages consistently (always use `(by @username)` format, not translated)
+
 **Multi-language Example**:
 
 English (CHANGELOG.md):
@@ -155,7 +168,7 @@ English (CHANGELOG.md):
 ## 1.3.0 - 2026-01-22
 
 ### Features
-- Add user authentication module
+- Add user authentication module (by @contributor1)
 - Support OAuth2 login
 
 ### Fixes
@@ -167,7 +180,7 @@ Chinese (CHANGELOG.zh.md):
 ## 1.3.0 - 2026-01-22
 
 ### 新功能
-- 新增用户认证模块
+- 新增用户认证模块 (by @contributor1)
 - 支持 OAuth2 登录
 
 ### 修复
@@ -179,7 +192,7 @@ Japanese (CHANGELOG.ja.md):
 ## 1.3.0 - 2026-01-22
 
 ### 新機能
-- ユーザー認証モジュールを追加
+- ユーザー認証モジュールを追加 (by @contributor1)
 - OAuth2 ログインをサポート
 
 ### 修正

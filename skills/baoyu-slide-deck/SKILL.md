@@ -24,6 +24,7 @@ Transform content into professional slide deck images.
 **Agent Execution Instructions**:
 1. Determine this SKILL.md file's directory path as `SKILL_DIR`
 2. Script path = `${SKILL_DIR}/scripts/<script-name>.ts`
+3. Resolve `${BUN_X}` runtime: if `bun` installed → `bun`; if `npx` available → `npx -y bun`; else suggest installing bun
 
 | Script | Purpose |
 |--------|---------|
@@ -189,14 +190,18 @@ Input → Preferences → Analyze → [Check Existing?] → Confirm (1-2 rounds)
 
 **1.1 Load Preferences (EXTEND.md)**
 
-Use Bash to check EXTEND.md existence (priority order):
+Check EXTEND.md existence (priority order):
 
 ```bash
-# Check project-level first
+# macOS, Linux, WSL, Git Bash
 test -f .baoyu-skills/baoyu-slide-deck/EXTEND.md && echo "project"
-
-# Then user-level (cross-platform: $HOME works on macOS/Linux/WSL)
 test -f "$HOME/.baoyu-skills/baoyu-slide-deck/EXTEND.md" && echo "user"
+```
+
+```powershell
+# PowerShell (Windows)
+if (Test-Path .baoyu-skills/baoyu-slide-deck/EXTEND.md) { "project" }
+if (Test-Path "$HOME/.baoyu-skills/baoyu-slide-deck/EXTEND.md") { "user" }
 ```
 
 ┌──────────────────────────────────────────────────┬───────────────────┐
@@ -226,6 +231,7 @@ Schema: `references/config/preferences-schema.md`
 **1.2 Analyze Content**
 
 1. Save source content (if pasted, save as `source.md`)
+   - **Backup rule**: If `source.md` exists, rename to `source-backup-YYYYMMDD-HHMMSS.md`
 2. Follow `references/analysis-framework.md` for content analysis
 3. Analyze content signals for style recommendations
 4. Detect source language
@@ -483,6 +489,7 @@ options:
    - Add slide-specific content
    - If `Layout:` specified, include layout guidance from `references/layouts.md`
 3. Save to `prompts/` directory
+   - **Backup rule**: If prompt file exists, rename to `prompts/NN-slide-{slug}-backup-YYYYMMDD-HHMMSS.md`
 
 **After generation**:
 - If `--prompts-only`, stop here and output prompt summary
@@ -539,15 +546,17 @@ options:
 **Standard flow**:
 1. Select available image generation skill
 2. Generate session ID: `slides-{topic-slug}-{timestamp}`
-3. Generate each slide sequentially with same session ID
+3. For each slide:
+   - **Backup rule**: If image file exists, rename to `NN-slide-{slug}-backup-YYYYMMDD-HHMMSS.png`
+   - Generate image sequentially with same session ID
 4. Report progress: "Generated X/N" (in user's language)
 5. Auto-retry once on failure before reporting error
 
 ### Step 8: Merge to PPTX and PDF
 
 ```bash
-npx -y bun ${SKILL_DIR}/scripts/merge-to-pptx.ts <slide-deck-dir>
-npx -y bun ${SKILL_DIR}/scripts/merge-to-pdf.ts <slide-deck-dir>
+${BUN_X} ${SKILL_DIR}/scripts/merge-to-pptx.ts <slide-deck-dir>
+${BUN_X} ${SKILL_DIR}/scripts/merge-to-pdf.ts <slide-deck-dir>
 ```
 
 ### Step 9: Output Summary
@@ -626,15 +635,17 @@ Flow:
 
 | Action | Command | Manual Steps |
 |--------|---------|--------------|
-| **Edit** | `--regenerate N` | Update prompt → Regenerate image → Regenerate PDF |
+| **Edit** | `--regenerate N` | **Update prompt file FIRST** → Regenerate image → Regenerate PDF |
 | **Add** | Manual | Create prompt → Generate image → Renumber subsequent → Update outline → Regenerate PDF |
 | **Delete** | Manual | Remove files → Renumber subsequent → Update outline → Regenerate PDF |
 
 ### Edit Single Slide
 
-1. Update prompt in `prompts/NN-slide-{slug}.md`
+1. **Update prompt file FIRST** in `prompts/NN-slide-{slug}.md`
 2. Run: `/baoyu-slide-deck <dir> --regenerate N`
 3. Or manually regenerate image + PDF
+
+**IMPORTANT**: When updating slides, ALWAYS update the prompt file (`prompts/NN-slide-{slug}.md`) FIRST before regenerating. This ensures changes are documented and reproducible.
 
 ### Add New Slide
 

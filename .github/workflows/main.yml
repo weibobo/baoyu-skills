@@ -16,28 +16,14 @@ permissions:
 # 执行的任务
 jobs:
   sync:
-    runs-on: ubuntu-latest  # 使用 Ubuntu 虚拟机运行
+    runs-on: ubuntu-latest
     steps:
-      # 步骤 1：检出你的 Fork 仓库代码
-      - name: Checkout Fork Repository
-        uses: actions/checkout@v4
+      - name: Sync Upstream
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
         with:
-          fetch-depth: 0  # 拉取完整的提交历史，避免合并冲突
-
-      # 步骤 2：添加上游仓库地址并拉取更新
-      - name: Add Upstream Remote and Fetch
-        run: |
-          # 替换下面的「原作者用户名」和「原仓库名」为实际值
-          git remote add upstream https://github.com/JimLiu/baoyu-skills.git
-          git fetch upstream  # 拉取上游仓库的所有分支
-
-      # 步骤 3：合并上游主分支到你的 Fork 主分支（若有冲突会自动失败，需手动处理）
-      - name: Merge Upstream to Fork
-        run: |
-          git checkout main  # 切换到你的 Fork 主分支（若原仓库是 master，改为 master）
-          git merge upstream/main --no-edit  # 合并上游主分支，无需手动编辑提交信息
-
-      # 步骤 4：推送合并后的代码到你的 Fork 仓库
-      - name: Push to Fork Repository
-        run: |
-          git push origin main  # 推送至你的 Fork 主分支
+          upstream_repository: JimLiu/baoyu-skills
+          upstream_branch: main
+          target_branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # 可选：强制同步（覆盖本地冲突）
+          force_sync: true

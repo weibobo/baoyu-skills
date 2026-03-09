@@ -1,6 +1,10 @@
 ---
 name: baoyu-infographic
 description: Generates professional infographics with 21 layout types and 20 visual styles. Analyzes content, recommends layout×style combinations, and generates publication-ready infographics. Use when user asks to create "infographic", "信息图", "visual summary", "可视化", or "高密度信息大图".
+version: 1.56.1
+metadata:
+  openclaw:
+    homepage: https://github.com/JimLiu/baoyu-skills#baoyu-infographic
 ---
 
 # Infographic Generator
@@ -143,12 +147,15 @@ Check EXTEND.md existence (priority order):
 ```bash
 # macOS, Linux, WSL, Git Bash
 test -f .baoyu-skills/baoyu-infographic/EXTEND.md && echo "project"
+test -f "${XDG_CONFIG_HOME:-$HOME/.config}/baoyu-skills/baoyu-infographic/EXTEND.md" && echo "xdg"
 test -f "$HOME/.baoyu-skills/baoyu-infographic/EXTEND.md" && echo "user"
 ```
 
 ```powershell
 # PowerShell (Windows)
 if (Test-Path .baoyu-skills/baoyu-infographic/EXTEND.md) { "project" }
+$xdg = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } else { "$HOME/.config" }
+if (Test-Path "$xdg/baoyu-skills/baoyu-infographic/EXTEND.md") { "xdg" }
 if (Test-Path "$HOME/.baoyu-skills/baoyu-infographic/EXTEND.md") { "user" }
 ```
 

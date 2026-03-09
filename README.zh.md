@@ -17,6 +17,27 @@
 npx skills add jimliu/baoyu-skills
 ```
 
+### 发布到 ClawHub / OpenClaw
+
+现在这个仓库支持把每个 `skills/baoyu-*` 目录作为独立 ClawHub skill 发布。
+
+```bash
+# 预览将要发布的变更
+./scripts/sync-clawhub.sh --dry-run
+
+# 发布 ./skills 下所有已变更的 skill
+./scripts/sync-clawhub.sh --all
+```
+
+ClawHub 按“单个 skill”安装，不是把整个 marketplace 一次性装进去。发布后，用户可以按需安装：
+
+```bash
+clawhub install baoyu-image-gen
+clawhub install baoyu-markdown-to-html
+```
+
+根据 ClawHub 的 registry 规则，发布到 ClawHub 的 skill 会以 `MIT-0` 许可分发。
+
 ### 注册插件市场
 
 在 Claude Code 中运行：
@@ -55,7 +76,7 @@ npx skills add jimliu/baoyu-skills
 |------|------|----------|
 | **content-skills** | 内容生成和发布 | [xhs-images](#baoyu-xhs-images), [infographic](#baoyu-infographic), [cover-image](#baoyu-cover-image), [slide-deck](#baoyu-slide-deck), [comic](#baoyu-comic), [article-illustrator](#baoyu-article-illustrator), [post-to-x](#baoyu-post-to-x), [post-to-wechat](#baoyu-post-to-wechat), [post-to-weibo](#baoyu-post-to-weibo) |
 | **ai-generation-skills** | AI 生成后端 | [image-gen](#baoyu-image-gen), [danger-gemini-web](#baoyu-danger-gemini-web) |
-| **utility-skills** | 内容处理工具 | [url-to-markdown](#baoyu-url-to-markdown), [danger-x-to-markdown](#baoyu-danger-x-to-markdown), [compress-image](#baoyu-compress-image), [format-markdown](#baoyu-format-markdown), [translate](#baoyu-translate) |
+| **utility-skills** | 内容处理工具 | [url-to-markdown](#baoyu-url-to-markdown), [danger-x-to-markdown](#baoyu-danger-x-to-markdown), [compress-image](#baoyu-compress-image), [format-markdown](#baoyu-format-markdown), [markdown-to-html](#baoyu-markdown-to-html), [translate](#baoyu-translate) |
 
 ## 更新技能
 
@@ -504,6 +525,8 @@ npx skills add jimliu/baoyu-skills
 
 发布内容和文章到 X (Twitter)。支持带图片的普通帖子和 X 文章（长篇 Markdown）。使用真实 Chrome + CDP 绕过反自动化检测。
 
+纯文本输入默认按普通帖子处理，Markdown 文件默认按 X 文章处理。脚本会将内容填入浏览器，用户需手动检查并发布。
+
 ```bash
 # 发布文字
 /baoyu-post-to-x "Hello from Claude Code!"
@@ -775,6 +798,21 @@ AI 驱动的生成后端。
 | 代码/命令 | `` `行内` `` 或 ` ```代码块``` ` |
 | 引用 | `>` 引用块 |
 
+#### baoyu-markdown-to-html
+
+将 Markdown 文件转换为样式化 HTML，支持微信公众号兼容主题、代码高亮，以及可选的外链底部引用。
+
+```bash
+# 基础转换
+/baoyu-markdown-to-html article.md
+
+# 主题 + 颜色
+/baoyu-markdown-to-html article.md --theme grace --color red
+
+# 将普通外链转换为文末引用
+/baoyu-markdown-to-html article.md --cite
+```
+
 #### baoyu-translate
 
 三模式翻译技能：快速（直接翻译）、标准（分析后翻译）、精翻（完整出版级工作流，含审校与润色）。
@@ -958,6 +996,19 @@ HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890 /baoyu-danger
 - 首次使用需确认免责声明
 - 通过环境变量或 Chrome 登录进行身份验证
 
+## 致谢
+
+本项目受到以下开源项目的启发，感谢它们的作者：
+
+- [x-article-publisher-skill](https://github.com/wshuyi/x-article-publisher-skill) by [@wshuyi](https://github.com/wshuyi) — 发布 X 文章技能的灵感来源
+- [doocs/md](https://github.com/doocs/md) by [@doocs](https://github.com/doocs) — Markdown 转 HTML 的核心实现逻辑
+- [高密度信息图 Prompt](https://waytoagi.feishu.cn/wiki/YG0zwalijihRREkgmPzcWRInnUg) by AJ@WaytoAGI — 信息图技能的灵感来源
+- [qiaomu-mondo-poster-design](https://github.com/joeseesun/qiaomu-mondo-poster-design) by [@joeseesun](https://github.com/joeseesun)（乔木） — Mondo 风格的灵感来源
+
 ## 许可证
 
 MIT
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=JimLiu/baoyu-skills&type=Date)](https://www.star-history.com/#JimLiu/baoyu-skills&Date)

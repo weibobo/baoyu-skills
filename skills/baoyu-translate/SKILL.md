@@ -1,6 +1,14 @@
 ---
 name: baoyu-translate
 description: Translates articles and documents between languages with three modes - quick (direct), normal (analyze then translate), and refined (analyze, translate, review, polish). Supports custom glossaries and terminology consistency via EXTEND.md. Use when user asks to "translate", "翻译", "精翻", "translate article", "translate to Chinese/English", "改成中文", "改成英文", "convert to Chinese", "localize", "本地化", or needs any document translation. Also triggers for "refined translation", "精细翻译", "proofread translation", "快速翻译", "快翻", "这篇文章翻译一下", or when a URL or file is provided with translation intent.
+version: 1.56.1
+metadata:
+  openclaw:
+    homepage: https://github.com/JimLiu/baoyu-skills#baoyu-translate
+    requires:
+      anyBins:
+        - bun
+        - npx
 ---
 
 # Translator
@@ -9,7 +17,7 @@ Three-mode translation skill: **quick** for direct translation, **normal** for a
 
 ## Script Directory
 
-Scripts in `scripts/` subdirectory. `${SKILL_DIR}` = this SKILL.md's directory path. Resolve `${BUN_X}` runtime: if `bun` installed → `bun`; if `npx` available → `npx -y bun`; else suggest installing bun. Replace `${SKILL_DIR}` and `${BUN_X}` with actual values.
+Scripts in `scripts/` subdirectory. `{baseDir}` = this SKILL.md's directory path. Resolve `${BUN_X}` runtime: if `bun` installed → `bun`; if `npx` available → `npx -y bun`; else suggest installing bun. Replace `{baseDir}` and `${BUN_X}` with actual values.
 
 | Script | Purpose |
 |--------|---------|
@@ -22,12 +30,15 @@ Check EXTEND.md existence (priority order):
 ```bash
 # macOS, Linux, WSL, Git Bash
 test -f .baoyu-skills/baoyu-translate/EXTEND.md && echo "project"
+test -f "${XDG_CONFIG_HOME:-$HOME/.config}/baoyu-skills/baoyu-translate/EXTEND.md" && echo "xdg"
 test -f "$HOME/.baoyu-skills/baoyu-translate/EXTEND.md" && echo "user"
 ```
 
 ```powershell
 # PowerShell (Windows)
 if (Test-Path .baoyu-skills/baoyu-translate/EXTEND.md) { "project" }
+$xdg = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } else { "$HOME/.config" }
+if (Test-Path "$xdg/baoyu-skills/baoyu-translate/EXTEND.md") { "xdg" }
 if (Test-Path "$HOME/.baoyu-skills/baoyu-translate/EXTEND.md") { "user" }
 ```
 
@@ -172,7 +183,7 @@ Before translating chunks:
 
 1. **Extract terminology**: Scan entire document for proper nouns, technical terms, recurring phrases
 2. **Build session glossary**: Merge extracted terms with loaded glossaries, establish consistent translations
-3. **Split into chunks**: Use `${BUN_X} ${SKILL_DIR}/scripts/chunk.ts <file> [--max-words <chunk_max_words>] [--output-dir <output-dir>]`
+3. **Split into chunks**: Use `${BUN_X} {baseDir}/scripts/chunk.ts <file> [--max-words <chunk_max_words>] [--output-dir <output-dir>]`
    - Parses markdown AST (headings, paragraphs, lists, code blocks, tables, etc.)
    - Splits at markdown block boundaries to preserve structure
    - If a single block exceeds the threshold, falls back to line splitting, then word splitting
@@ -201,6 +212,7 @@ Before translating chunks:
 - **Natural flow**: Use idiomatic target language word order and sentence patterns; break or restructure sentences freely when the source structure doesn't work naturally in the target language
 - **Terminology**: Use standard translations; annotate with original term in parentheses on first occurrence
 - **Preserve format**: Keep all markdown formatting (headings, bold, italic, images, links, code blocks)
+- **Image-language awareness**: Preserve image references exactly during translation, but after the translation is complete, review referenced images and check whether their likely main text language still matches the translated article language
 - **Frontmatter transformation**: If the source has YAML frontmatter, preserve it in the translation with these changes: (1) Rename metadata fields that describe the *source* article — `url`→`sourceUrl`, `title`→`sourceTitle`, `description`→`sourceDescription`, `author`→`sourceAuthor`, `date`→`sourceDate`, and any similar origin-metadata fields — by adding a `source` prefix (camelCase). (2) Translate the values of text fields (title, description, etc.) and add them as new top-level fields. (3) Keep other fields (tags, categories, custom fields) as-is, translating their values where appropriate
 - **Respect original**: Maintain original meaning and intent; do not add, remove, or editorialize — but sentence structure and imagery may be adapted freely to serve the meaning
 - **Translator's notes**: For terms, concepts, or cultural references that target readers may not understand — due to jargon, cultural gaps, or domain-specific knowledge — add a concise explanatory note in parentheses immediately after the term. The note should explain *what it means* in plain language, not just provide the English original. Format: `译文（English original，通俗解释）`. Calibrate annotation depth to the target audience: general readers need more notes than technical readers. Only add notes where genuinely needed; do not over-annotate obvious terms.
@@ -239,6 +251,20 @@ Each step reads the previous step's file and builds on it.
 
 Final translation is always at `translation.md` in the output directory.
 
+After the final translation is written, do a lightweight image-language pass:
+
+1. Collect image references from the translated article
+2. Identify likely text-heavy images such as covers, screenshots, diagrams, charts, frameworks, and infographics
+3. If any image likely contains a main text language that does not match the translated article language, proactively remind the user
+4. The reminder must be a list only. Do not automatically localize those images unless the user asks
+
+Reminder format (use whatever image syntax the article already uses — standard markdown or wikilink):
+```text
+Possible image localization needed:
+- ![example cover](attachments/example-cover.png): likely still contains source-language text while the article is now in target language
+- ![example diagram](attachments/example-diagram.png): likely text-heavy framework graphic, check whether labels need translation
+```
+
 Display summary:
 ```
 **Translation complete** ({mode} mode)
@@ -249,6 +275,8 @@ Output dir: {output-dir}/
 Final: {output-dir}/translation.md
 Glossary terms applied: {count}
 ```
+
+If mismatched image-language candidates were found, append a short note after the summary telling the user that some embedded images may still need image-text localization, followed by the candidate list.
 
 ## Extension Support
 

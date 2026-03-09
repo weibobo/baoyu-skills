@@ -2,6 +2,76 @@
 
 English | [中文](./CHANGELOG.zh.md)
 
+## 1.59.0 - 2026-03-09
+
+### Features
+- `baoyu-image-gen`: add batch parallel image generation and provider-level throttling (by @SeamoonAO)
+
+### Fixes
+- `baoyu-image-gen`: restore Google as default provider when multiple keys available
+
+### Documentation
+- Improve skill documentation clarity (by @SeamoonAO)
+
+## 1.58.0 - 2026-03-08
+
+### Features
+- Add XDG config path support for EXTEND.md (by @liby)
+
+### Fixes
+- `baoyu-post-to-wechat`: surface agent-browser startup errors
+- `baoyu-post-to-wechat`: harden agent-browser command and eval handling (by @luojiyin1987)
+- `baoyu-image-gen`: use execFileSync for google curl requests (by @luojiyin1987)
+- `baoyu-format-markdown`: use spawnSync for autocorrect command (by @luojiyin1987)
+
+### Documentation
+- Fix CLAUDE dependency statement (by @luojiyin1987)
+- Add markdown-to-html to README utility skills (by @luojiyin1987)
+
+## 1.57.0 - 2026-03-08
+
+### Features
+- Add ClawHub/OpenClaw publishing support with sync script and README documentation
+
+### Refactor
+- Add openclaw metadata to all skill frontmatter for ClawHub registry compatibility
+- Rename `SKILL_DIR` to `baseDir` across all skills for consistency
+- `baoyu-danger-gemini-web`, `baoyu-danger-x-to-markdown`: dynamic script path in usage display
+- `baoyu-comic`, `baoyu-xhs-images`: use skill interface instead of direct script invocation for image generation
+
+## 1.56.1 - 2026-03-08
+
+### Fixes
+- `baoyu-post-to-weibo`: simplify article image insertion with Backspace-based placeholder deletion for ProseMirror compatibility
+
+## 1.56.0 - 2026-03-08
+
+### Features
+- `baoyu-article-illustrator`: preset-first selection flow with categorized style presets by content type
+- `baoyu-xhs-images`: streamline workflow from 6 to 4 steps with Smart Confirm (Quick/Customize/Detailed paths)
+
+### Fixes
+- `baoyu-post-to-wechat`: improve image upload reliability with file chooser interception and fallback
+
+## 1.55.0 - 2026-03-08
+
+### Features
+- `baoyu-article-illustrator`: add screen-print style and `--preset` flag for quick type + style selection
+- `baoyu-cover-image`: add screen-print rendering and duotone palette with 5 new style presets
+- `baoyu-xhs-images`: add screen-print style and `--preset` flag with 23 built-in presets
+
+### Documentation
+- Add credits section to both READMEs acknowledging open source inspirations
+
+## 1.54.1 - 2026-03-07
+
+### Fixes
+- `baoyu-post-to-x`: keep composed posts open in Chrome so users can review and publish manually
+
+### Documentation
+- `baoyu-post-to-x`: document default post type selection and manual publishing flow
+- `README`: add Star History charts to the English and Chinese READMEs
+
 ## 1.54.0 - 2026-03-06
 
 ### Features

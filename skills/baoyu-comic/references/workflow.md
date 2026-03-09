@@ -39,12 +39,15 @@ Check EXTEND.md existence (priority order):
 ```bash
 # macOS, Linux, WSL, Git Bash
 test -f .baoyu-skills/baoyu-comic/EXTEND.md && echo "project"
+test -f "${XDG_CONFIG_HOME:-$HOME/.config}/baoyu-skills/baoyu-comic/EXTEND.md" && echo "xdg"
 test -f "$HOME/.baoyu-skills/baoyu-comic/EXTEND.md" && echo "user"
 ```
 
 ```powershell
 # PowerShell (Windows)
 if (Test-Path .baoyu-skills/baoyu-comic/EXTEND.md) { "project" }
+$xdg = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } else { "$HOME/.config" }
+if (Test-Path "$xdg/baoyu-skills/baoyu-comic/EXTEND.md") { "xdg" }
 if (Test-Path "$HOME/.baoyu-skills/baoyu-comic/EXTEND.md") { "user" }
 ```
 
@@ -433,14 +436,12 @@ With confirmed prompts from Step 5/6:
 
 **Strategy A: Using `--ref` parameter** (e.g., baoyu-image-gen)
 
-```bash
-# Each page generation MUST include --ref
-${BUN_X} ${SKILL_DIR}/../baoyu-image-gen/scripts/main.ts \
-  --promptfiles prompts/01-page-xxx.md \
-  --image 01-page-xxx.png \
-  --ar 3:4 \
-  --ref characters/characters.png
-```
+- Read the chosen image generation skill's `SKILL.md`
+- Invoke that installed skill via its documented interface, not by calling its scripts directly
+- For every page, use `prompts/01-page-xxx.md` as the prompt-file input
+- Save output to `01-page-xxx.png`
+- Use aspect ratio `3:4`
+- Pass `characters/characters.png` as `--ref` on every page generation
 
 **Strategy B: Embedding character descriptions in prompt**
 
@@ -478,7 +479,7 @@ If image generation skill supports `--sessionId`:
 After all images generated:
 
 ```bash
-${BUN_X} ${SKILL_DIR}/scripts/merge-to-pdf.ts <comic-dir>
+${BUN_X} {baseDir}/scripts/merge-to-pdf.ts <comic-dir>
 ```
 
 Creates `{topic-slug}.pdf` with all pages as full-page images.

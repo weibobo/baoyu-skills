@@ -2,6 +2,76 @@
 
 [English](./CHANGELOG.md) | 中文
 
+## 1.59.0 - 2026-03-09
+
+### 新功能
+- `baoyu-image-gen`：新增批量并行图片生成和提供商级别限流 (by @SeamoonAO)
+
+### 修复
+- `baoyu-image-gen`：修复多个 API key 可用时恢复 Google 为默认提供商
+
+### 文档
+- 改进技能文档清晰度 (by @SeamoonAO)
+
+## 1.58.0 - 2026-03-08
+
+### 新功能
+- 新增 EXTEND.md 的 XDG 配置路径支持 (by @liby)
+
+### 修复
+- `baoyu-post-to-wechat`：暴露 agent-browser 启动错误信息
+- `baoyu-post-to-wechat`：加固 agent-browser 命令和 eval 处理 (by @luojiyin1987)
+- `baoyu-image-gen`：使用 execFileSync 替代 shell 执行 Google curl 请求 (by @luojiyin1987)
+- `baoyu-format-markdown`：使用 spawnSync 替代 shell 执行 autocorrect 命令 (by @luojiyin1987)
+
+### 文档
+- 修正 CLAUDE 依赖说明 (by @luojiyin1987)
+- 将 markdown-to-html 添加到 README 工具技能列表 (by @luojiyin1987)
+
+## 1.57.0 - 2026-03-08
+
+### 新功能
+- 新增 ClawHub/OpenClaw 发布支持，包含同步脚本和 README 文档
+
+### 重构
+- 为所有 skill 前言添加 openclaw 元数据，兼容 ClawHub 注册表
+- 全部 skill 中将 `SKILL_DIR` 统一重命名为 `baseDir`
+- `baoyu-danger-gemini-web`、`baoyu-danger-x-to-markdown`：使用动态脚本路径显示用法
+- `baoyu-comic`、`baoyu-xhs-images`：通过 skill 接口调用图片生成，不再直接调用脚本
+
+## 1.56.1 - 2026-03-08
+
+### 修复
+- `baoyu-post-to-weibo`：简化头条文章图片插入逻辑，使用 Backspace 按键替代复杂的 deleteContents 方案，兼容 ProseMirror 编辑器
+
+## 1.56.0 - 2026-03-08
+
+### 新功能
+- `baoyu-article-illustrator`：预设优先选择流程，按内容类型分类的风格预设
+- `baoyu-xhs-images`：精简工作流从 6 步到 4 步，新增智能确认（快速/自定义/详细三种路径）
+
+### 修复
+- `baoyu-post-to-wechat`：通过文件选择器拦截改进图片上传可靠性
+
+## 1.55.0 - 2026-03-08
+
+### 新功能
+- `baoyu-article-illustrator`：新增 screen-print 风格和 `--preset` 快捷预设（如 tech-explainer、opinion-piece）
+- `baoyu-cover-image`：新增 screen-print 渲染风格和 duotone 调色板，包含 5 个新预设（poster-art、mondo 等）
+- `baoyu-xhs-images`：新增 screen-print 风格和 `--preset` 快捷预设，内置 23 个场景预设
+
+### 文档
+- 为中英文 README 新增致谢章节，致敬相关开源项目
+
+## 1.54.1 - 2026-03-07
+
+### 修复
+- `baoyu-post-to-x`：保持已填充的发帖窗口处于打开状态，方便用户手动检查并发布
+
+### 文档
+- `baoyu-post-to-x`：补充默认帖子类型选择规则和手动发布流程说明
+- `README`：为中英文 README 新增 Star History 图表
+
 ## 1.54.0 - 2026-03-06
 
 ### 新功能

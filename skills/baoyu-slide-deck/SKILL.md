@@ -1,6 +1,14 @@
 ---
 name: baoyu-slide-deck
 description: Generates professional slide deck images from content. Creates outlines with style instructions, then generates individual slide images. Use when user asks to "create slides", "make a presentation", "generate deck", "slide deck", or "PPT".
+version: 1.56.1
+metadata:
+  openclaw:
+    homepage: https://github.com/JimLiu/baoyu-skills#baoyu-slide-deck
+    requires:
+      anyBins:
+        - bun
+        - npx
 ---
 
 # Slide Deck Generator
@@ -22,8 +30,8 @@ Transform content into professional slide deck images.
 ## Script Directory
 
 **Agent Execution Instructions**:
-1. Determine this SKILL.md file's directory path as `SKILL_DIR`
-2. Script path = `${SKILL_DIR}/scripts/<script-name>.ts`
+1. Determine this SKILL.md file's directory path as `{baseDir}`
+2. Script path = `{baseDir}/scripts/<script-name>.ts`
 3. Resolve `${BUN_X}` runtime: if `bun` installed → `bun`; if `npx` available → `npx -y bun`; else suggest installing bun
 
 | Script | Purpose |
@@ -195,12 +203,15 @@ Check EXTEND.md existence (priority order):
 ```bash
 # macOS, Linux, WSL, Git Bash
 test -f .baoyu-skills/baoyu-slide-deck/EXTEND.md && echo "project"
+test -f "${XDG_CONFIG_HOME:-$HOME/.config}/baoyu-skills/baoyu-slide-deck/EXTEND.md" && echo "xdg"
 test -f "$HOME/.baoyu-skills/baoyu-slide-deck/EXTEND.md" && echo "user"
 ```
 
 ```powershell
 # PowerShell (Windows)
 if (Test-Path .baoyu-skills/baoyu-slide-deck/EXTEND.md) { "project" }
+$xdg = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } else { "$HOME/.config" }
+if (Test-Path "$xdg/baoyu-skills/baoyu-slide-deck/EXTEND.md") { "xdg" }
 if (Test-Path "$HOME/.baoyu-skills/baoyu-slide-deck/EXTEND.md") { "user" }
 ```
 
@@ -555,8 +566,8 @@ options:
 ### Step 8: Merge to PPTX and PDF
 
 ```bash
-${BUN_X} ${SKILL_DIR}/scripts/merge-to-pptx.ts <slide-deck-dir>
-${BUN_X} ${SKILL_DIR}/scripts/merge-to-pdf.ts <slide-deck-dir>
+${BUN_X} {baseDir}/scripts/merge-to-pptx.ts <slide-deck-dir>
+${BUN_X} {baseDir}/scripts/merge-to-pdf.ts <slide-deck-dir>
 ```
 
 ### Step 9: Output Summary

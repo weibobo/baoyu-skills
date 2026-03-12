@@ -2,6 +2,52 @@
 
 English | [中文](./CHANGELOG.zh.md)
 
+## 1.62.0 - 2026-03-12
+
+### Features
+- `baoyu-infographic`: support flexible aspect ratios with custom W:H values (e.g., 3:4, 4:3, 2.35:1) in addition to named presets
+
+### Fixes
+- Set strict mode on plugins to prevent duplicated slash commands
+
+### Documentation
+- `baoyu-post-to-wechat`: replace credential-like placeholders
+
+## 1.61.0 - 2026-03-11
+
+### Features
+- `baoyu-post-to-wechat`: add multi-account support with `--account` CLI arg, EXTEND.md accounts block, isolated Chrome profiles, and credential resolution chain
+
+### Fixes
+- Exclude `out/dist/build` dirs and `bun.lockb` from skill release files
+- Use proper MIME types in skill publish to fix ClawhHub rejection
+
+## 1.60.0 - 2026-03-11
+
+### Features
+- `baoyu-url-to-markdown`: support reusing existing Chrome CDP instances and fix port detection order
+
+### Fixes
+- `baoyu-post-to-x`: add missing `fs` import in x-article
+
+### Refactor
+- Unify all CDP skills to use shared `baoyu-chrome-cdp` package with vendored copies
+- Simplify CLAUDE.md, move detailed documentation to `docs/` directory
+- Publish skills directly from synced vendor, removing separate artifact preparation step
+
+## 1.59.1 - 2026-03-11
+
+### Fixes
+- `baoyu-translate`: improve short text annotation density rule and add explicit style preset passing to 02-prompt.md
+- `baoyu-post-to-x`: remove `--disable-blink-features=AutomationControlled` Chrome flag
+
+### Refactor
+- `baoyu-post-to-weibo`: add entry point guard to md-to-html.ts for module import compatibility
+- Replace clawhub CLI with local sync-clawhub.mjs script
+
+### Documentation
+- Update CLAUDE.md to reflect v1.59.0 codebase state (by @jackL1020)
+
 ## 1.59.0 - 2026-03-09
 
 ### Features

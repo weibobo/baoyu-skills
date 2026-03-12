@@ -2,6 +2,52 @@
 
 [English](./CHANGELOG.md) | 中文
 
+## 1.62.0 - 2026-03-12
+
+### 新功能
+- `baoyu-infographic`：支持灵活宽高比，可使用自定义 W:H 值（如 3:4、4:3、2.35:1），同时保留预设名称
+
+### 修复
+- 设置插件严格模式，防止重复注册斜杠命令
+
+### 文档
+- `baoyu-post-to-wechat`：替换类似凭证的占位符
+
+## 1.61.0 - 2026-03-11
+
+### 新功能
+- `baoyu-post-to-wechat`：新增多账号支持，通过 `--account` 参数选择账号，EXTEND.md 支持 accounts 配置块，每个账号独立 Chrome 配置目录和凭证解析链
+
+### 修复
+- 排除 `out/dist/build` 目录和 `bun.lockb` 文件，避免打包到技能发布文件中
+- 修复技能发布时 MIME 类型不正确导致 ClawhHub 拒绝的问题
+
+## 1.60.0 - 2026-03-11
+
+### 新功能
+- `baoyu-url-to-markdown`：支持复用已有 Chrome CDP 实例，修复端口检测顺序问题
+
+### 修复
+- `baoyu-post-to-x`：补充 x-article 缺失的 `fs` 导入
+
+### 重构
+- 统一所有 CDP 技能使用共享 `baoyu-chrome-cdp` 包，各技能内置 vendor 副本
+- 精简 CLAUDE.md，将详细文档移至 `docs/` 目录
+- 从 synced vendor 直接发布技能，移除单独的 artifact 准备步骤
+
+## 1.59.1 - 2026-03-11
+
+### 修复
+- `baoyu-translate`：改进短文本注释密度规则，补充风格预设到 02-prompt.md 的显式传递
+- `baoyu-post-to-x`：移除 `--disable-blink-features=AutomationControlled` Chrome 启动参数
+
+### 重构
+- `baoyu-post-to-weibo`：为 md-to-html.ts 添加入口守卫，支持模块导入
+- 使用本地 sync-clawhub.mjs 脚本替代 clawhub CLI
+
+### 文档
+- 更新 CLAUDE.md 以反映 v1.59.0 代码库状态 (by @jackL1020)
+
 ## 1.59.0 - 2026-03-09
 
 ### 新功能

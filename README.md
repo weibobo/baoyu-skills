@@ -169,8 +169,9 @@ Generate professional infographics with 20 layout types and 17 visual styles. An
 # Specify both
 /baoyu-infographic path/to/content.md --layout funnel --style corporate-memphis
 
-# With aspect ratio
+# With aspect ratio (named preset or custom W:H)
 /baoyu-infographic path/to/content.md --aspect portrait
+/baoyu-infographic path/to/content.md --aspect 3:4
 ```
 
 **Options**:
@@ -178,7 +179,7 @@ Generate professional infographics with 20 layout types and 17 visual styles. An
 |--------|-------------|
 | `--layout <name>` | Information layout (20 options) |
 | `--style <name>` | Visual style (17 options, default: craft-handmade) |
-| `--aspect <ratio>` | landscape (16:9), portrait (9:16), square (1:1) |
+| `--aspect <ratio>` | Named: landscape (16:9), portrait (9:16), square (1:1). Custom: any W:H ratio (e.g., 3:4, 4:3, 2.35:1) |
 | `--lang <code>` | Output language (en, zh, ja, etc.) |
 
 **Layouts** (information structure):
@@ -580,6 +581,47 @@ To obtain credentials:
 4. Add your machine's IP to the whitelist
 
 **Browser Method** (no API setup needed): Requires Google Chrome. First run opens browser for QR code login (session preserved).
+
+**Multi-Account Support**: Manage multiple WeChat Official Accounts via `EXTEND.md`:
+
+```bash
+mkdir -p .baoyu-skills/baoyu-post-to-wechat
+```
+
+Create `.baoyu-skills/baoyu-post-to-wechat/EXTEND.md`:
+
+```yaml
+# Global settings (shared across all accounts)
+default_theme: default
+default_color: blue
+
+# Account list
+accounts:
+  - name: My Tech Blog
+    alias: tech-blog
+    default: false
+    default_publish_method: api
+    default_author: Author Name
+    need_open_comment: 1
+    only_fans_can_comment: 0
+    app_id: your_wechat_app_id
+    app_secret: your_wechat_app_secret
+  - name: AI Newsletter
+    alias: ai-news
+    default_publish_method: browser
+    default_author: AI Newsletter
+    need_open_comment: 1
+    only_fans_can_comment: 0
+```
+
+| Accounts configured | Behavior |
+|---------------------|----------|
+| No `accounts` block | Single-account mode (backward compatible) |
+| 1 account | Auto-select, no prompt |
+| 2+ accounts | Prompt to select, or use `--account <alias>` |
+| 1 account has `default: true` | Pre-selected as default |
+
+Each account gets an isolated Chrome profile for independent login sessions (browser method). API credentials can be set inline in EXTEND.md or via `.env` with alias-prefixed keys (e.g., `WECHAT_TECH_BLOG_APP_ID`).
 
 #### baoyu-post-to-weibo
 

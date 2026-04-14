@@ -1,6 +1,6 @@
 ---
 name: baoyu-cover-image
-description: Generates article cover images with 5 dimensions (type, palette, rendering, text, mood) combining 10 color palettes and 7 rendering styles. Supports cinematic (2.35:1), widescreen (16:9), and square (1:1) aspects. Use when user asks to "generate cover image", "create article cover", or "make cover".
+description: Generates article cover images with 5 dimensions (type, palette, rendering, text, mood) combining 11 color palettes and 7 rendering styles. Supports cinematic (2.35:1), widescreen (16:9), and square (1:1) aspects. Use when user asks to "generate cover image", "create article cover", or "make cover".
 version: 1.56.1
 metadata:
   openclaw:
@@ -39,7 +39,7 @@ Generate elegant cover images for articles with 5-dimensional customization.
 | Option | Description |
 |--------|-------------|
 | `--type <name>` | hero, conceptual, typography, metaphor, scene, minimal |
-| `--palette <name>` | warm, elegant, cool, dark, earth, vivid, pastel, mono, retro, duotone |
+| `--palette <name>` | warm, elegant, cool, dark, earth, vivid, pastel, mono, retro, duotone, macaron |
 | `--rendering <name>` | flat-vector, hand-drawn, painterly, digital, pixel, chalk, screen-print |
 | `--style <name>` | Preset shorthand (see [Style Presets](references/style-presets.md)) |
 | `--text <level>` | none, title-only, title-subtitle, text-rich |
@@ -56,7 +56,7 @@ Generate elegant cover images for articles with 5-dimensional customization.
 | Dimension | Values | Default |
 |-----------|--------|---------|
 | **Type** | hero, conceptual, typography, metaphor, scene, minimal | auto |
-| **Palette** | warm, elegant, cool, dark, earth, vivid, pastel, mono, retro, duotone | auto |
+| **Palette** | warm, elegant, cool, dark, earth, vivid, pastel, mono, retro, duotone, macaron | auto |
 | **Rendering** | flat-vector, hand-drawn, painterly, digital, pixel, chalk, screen-print | auto |
 | **Text** | none, title-only, title-subtitle, text-rich | title-only |
 | **Mood** | subtle, balanced, bold | balanced |
@@ -69,7 +69,7 @@ Auto-selection rules: [references/auto-selection.md](references/auto-selection.m
 **Types**: hero, conceptual, typography, metaphor, scene, minimal
 → Details: [references/types.md](references/types.md)
 
-**Palettes**: warm, elegant, cool, dark, earth, vivid, pastel, mono, retro, duotone
+**Palettes**: warm, elegant, cool, dark, earth, vivid, pastel, mono, retro, duotone, macaron
 → Details: [references/palettes/](references/palettes/)
 
 **Renderings**: flat-vector, hand-drawn, painterly, digital, pixel, chalk, screen-print
@@ -162,9 +162,20 @@ if (Test-Path "$HOME/.baoyu-skills/baoyu-cover-image/EXTEND.md") { "user" }
 5. **Detect language**: Compare source, user input, EXTEND.md preference
 6. **Determine output directory**: Per File Structure rules
 
+**⚠️ People in Reference Images:**
+
+If reference images contain **people** who should appear in the cover:
+
+- **Model supports `--ref`** (default): Copy image to `refs/`, pass via `--ref` at generation. No description file needed — the model sees the face directly.
+- **Model does NOT support `--ref`** (Jimeng, Seedream 3.0): Create `refs/ref-NN-{slug}.md` with per-character description (hair, glasses, skin tone, clothing). Embed as MUST/REQUIRED instructions in prompt text.
+
+See [reference-images.md](references/workflow/reference-images.md) for full decision table.
+
 ### Step 2: Confirm Options ⚠️
 
-Full confirmation flow: [references/workflow/confirm-options.md](references/workflow/confirm-options.md)
+**MUST use `AskUserQuestion` tool** to present options as interactive selection — NOT plain text tables. Present up to 4 questions in a single `AskUserQuestion` call (Type, Palette, Rendering, Font + Settings). Each question shows the recommended option first with reason, followed by alternatives.
+
+Full confirmation flow and question format: [references/workflow/confirm-options.md](references/workflow/confirm-options.md)
 
 | Condition | Skipped | Still Asked |
 |-----------|---------|-------------|

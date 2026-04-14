@@ -32,7 +32,7 @@ This repository now supports publishing each `skills/baoyu-*` directory as an in
 ClawHub installs skills individually, not as one marketplace bundle. After publishing, users can install specific skills such as:
 
 ```bash
-clawhub install baoyu-image-gen
+clawhub install baoyu-imagine
 clawhub install baoyu-markdown-to-html
 ```
 
@@ -43,7 +43,7 @@ Publishing to ClawHub releases the published skill under `MIT-0`, per ClawHub's 
 Run the following command in Claude Code:
 
 ```bash
-/plugin marketplace add jimliu/baoyu-skills
+/plugin marketplace add JimLiu/baoyu-skills
 ```
 
 ### Install Skills
@@ -52,16 +52,14 @@ Run the following command in Claude Code:
 
 1. Select **Browse and install plugins**
 2. Select **baoyu-skills**
-3. Select the plugin(s) you want to install
+3. Select the **baoyu-skills** plugin
 4. Select **Install now**
 
 **Option 2: Direct Install**
 
 ```bash
-# Install specific plugin
-/plugin install content-skills@baoyu-skills
-/plugin install ai-generation-skills@baoyu-skills
-/plugin install utility-skills@baoyu-skills
+# Install the marketplace's single plugin
+/plugin install baoyu-skills@baoyu-skills
 ```
 
 **Option 3: Ask the Agent**
@@ -70,13 +68,13 @@ Simply tell Claude Code:
 
 > Please install Skills from github.com/JimLiu/baoyu-skills
 
-### Available Plugins
+### Available Plugin
 
-| Plugin | Description | Skills |
-|--------|-------------|--------|
-| **content-skills** | Content generation and publishing | [xhs-images](#baoyu-xhs-images), [infographic](#baoyu-infographic), [cover-image](#baoyu-cover-image), [slide-deck](#baoyu-slide-deck), [comic](#baoyu-comic), [article-illustrator](#baoyu-article-illustrator), [post-to-x](#baoyu-post-to-x), [post-to-wechat](#baoyu-post-to-wechat), [post-to-weibo](#baoyu-post-to-weibo) |
-| **ai-generation-skills** | AI-powered generation backends | [image-gen](#baoyu-image-gen), [danger-gemini-web](#baoyu-danger-gemini-web) |
-| **utility-skills** | Utility tools for content processing | [url-to-markdown](#baoyu-url-to-markdown), [danger-x-to-markdown](#baoyu-danger-x-to-markdown), [compress-image](#baoyu-compress-image), [format-markdown](#baoyu-format-markdown), [markdown-to-html](#baoyu-markdown-to-html), [translate](#baoyu-translate) |
+The marketplace now exposes a single plugin so each skill is registered exactly once.
+
+| Plugin | Description | Includes |
+|--------|-------------|----------|
+| **baoyu-skills** | Content generation, AI backends, and utility tools for daily work efficiency | All skills in this repository, organized below as Content Skills, AI Generation Skills, and Utility Skills |
 
 ## Update Skills
 
@@ -101,7 +99,7 @@ Content generation and publishing skills.
 
 #### baoyu-xhs-images
 
-Xiaohongshu (RedNote) infographic series generator. Breaks down content into 1-10 cartoon-style infographics with **Style × Layout** two-dimensional system.
+Xiaohongshu image card series generator. Breaks down content into 1-10 cartoon-style image cards with **Style × Layout** system and optional palette override.
 
 ```bash
 # Auto-select style and layout
@@ -114,13 +112,22 @@ Xiaohongshu (RedNote) infographic series generator. Breaks down content into 1-1
 /baoyu-xhs-images posts/ai-future/article.md --layout dense
 
 # Combine style and layout
-/baoyu-xhs-images posts/ai-future/article.md --style tech --layout list
+/baoyu-xhs-images posts/ai-future/article.md --style notion --layout list
+
+# Override palette
+/baoyu-xhs-images posts/ai-future/article.md --style notion --palette macaron
 
 # Direct content input
 /baoyu-xhs-images 今日星座运势
+
+# Non-interactive (skip all confirmations, for scheduled tasks)
+/baoyu-xhs-images posts/ai-future/article.md --yes
+/baoyu-xhs-images posts/ai-future/article.md --yes --preset knowledge-card
 ```
 
-**Styles** (visual aesthetics): `cute` (default), `fresh`, `warm`, `bold`, `minimal`, `retro`, `pop`, `notion`, `chalkboard`
+**Styles** (visual aesthetics): `cute` (default), `fresh`, `warm`, `bold`, `minimal`, `retro`, `pop`, `notion`, `chalkboard`, `study-notes`, `screen-print`, `sketch-notes`
+
+**Palettes** (optional color override): `macaron`, `warm`, `neon`
 
 **Style Previews**:
 
@@ -154,7 +161,7 @@ Xiaohongshu (RedNote) infographic series generator. Breaks down content into 1-1
 
 #### baoyu-infographic
 
-Generate professional infographics with 20 layout types and 17 visual styles. Analyzes content, recommends layout×style combinations, and generates publication-ready infographics.
+Generate professional infographics with 21 layout types and 21 visual styles. Analyzes content, recommends layout×style combinations, and generates publication-ready infographics.
 
 ```bash
 # Auto-recommend combinations based on content
@@ -265,9 +272,46 @@ Generate professional infographics with 20 layout types and 17 visual styles. An
 | ![knolling](./screenshots/infographic-styles/knolling.webp) | ![lego-brick](./screenshots/infographic-styles/lego-brick.webp) | |
 | knolling | lego-brick | |
 
+#### baoyu-diagram
+
+Generate publication-ready SVG diagrams from source material — flowcharts, sequence/protocol diagrams, structural/architecture diagrams, and illustrative intuition diagrams. Analyzes input material to recommend diagram type(s) and splitting strategy, confirms the plan once, then generates all diagrams. Claude writes real SVG code directly following a cohesive design system. Output is self-contained `.svg` files with embedded styles and auto dark-mode.
+
+```bash
+# Topic string — skill analyzes and proposes a plan
+/baoyu-diagram "how JWT authentication works"
+/baoyu-diagram "Kubernetes architecture" --type structural
+/baoyu-diagram "OAuth 2.0 flow"          --type sequence
+
+# File path — skill reads, analyzes, and proposes a plan
+/baoyu-diagram path/to/article.md
+
+# Language and output path
+/baoyu-diagram "微服务架构" --lang zh
+/baoyu-diagram "build pipeline" --out docs/build-pipeline.svg
+```
+
+**Options**:
+| Option | Description |
+|--------|-------------|
+| `--type <name>` | `flowchart`, `sequence`, `structural`, `illustrative`, `class`, `auto` (default). Skips type recommendation. |
+| `--lang <code>` | Output language (en, zh, ja, ...) |
+| `--out <path>` | Output file path. Generates exactly one diagram focused on the most important aspect. |
+
+**Diagram types**:
+
+| Type | Reader need | Verbs that trigger it |
+|------|-------------|------------------------|
+| `flowchart` | Walk me through the steps in order | walk through, steps, process, lifecycle, workflow, state machine |
+| `sequence` | Who talks to whom, in what order | protocol, handshake, auth flow, OAuth, TCP, request/response |
+| `structural` | Show me what's inside what, how it's organised | architecture, components, topology, layout, what's inside |
+| `illustrative` | Give me the intuition — draw the mechanism | how does X work, explain X, intuition for, why does X do Y |
+| `class` | What are the types and how are they related | class diagram, UML, inheritance, interface, schema |
+
+Not an image-generation skill — no LLM image model is called. Claude writes the SVG by hand with hand-computed layout math, so every diagram honors the design system. Embedded `<style>` block with `@media (prefers-color-scheme: dark)` means the same file renders correctly in both light and dark mode anywhere it's embedded.
+
 #### baoyu-cover-image
 
-Generate cover images for articles with 5 dimensions: Type × Palette × Rendering × Text × Mood. Combines 9 color palettes with 6 rendering styles for 54 unique combinations.
+Generate cover images for articles with 5 dimensions: Type × Palette × Rendering × Text × Mood. Combines 11 color palettes with 7 rendering styles for 77 unique combinations.
 
 ```bash
 # Auto-select all dimensions based on content
@@ -292,8 +336,8 @@ Generate cover images for articles with 5 dimensions: Type × Palette × Renderi
 
 **Five Dimensions**:
 - **Type**: `hero`, `conceptual`, `typography`, `metaphor`, `scene`, `minimal`
-- **Palette**: `warm`, `elegant`, `cool`, `dark`, `earth`, `vivid`, `pastel`, `mono`, `retro`
-- **Rendering**: `flat-vector`, `hand-drawn`, `painterly`, `digital`, `pixel`, `chalk`
+- **Palette**: `warm`, `elegant`, `cool`, `dark`, `earth`, `vivid`, `pastel`, `mono`, `retro`, `duotone`, `macaron`
+- **Rendering**: `flat-vector`, `hand-drawn`, `painterly`, `digital`, `pixel`, `chalk`, `screen-print`
 - **Text**: `none`, `title-only` (default), `title-subtitle`, `text-rich`
 - **Mood**: `subtle`, `balanced` (default), `bold`
 
@@ -471,20 +515,17 @@ Knowledge comic creator with flexible art style × tone combinations. Creates or
 
 #### baoyu-article-illustrator
 
-Smart article illustration skill with Type × Style two-dimension approach. Analyzes article structure, identifies positions requiring visual aids, and generates illustrations.
+Smart article illustration skill with Type × Style × Palette three-dimension approach. Analyzes article structure, identifies positions requiring visual aids, and generates illustrations.
 
 ```bash
 # Auto-select type and style based on content
 /baoyu-article-illustrator path/to/article.md
 
-# Specify type
-/baoyu-article-illustrator path/to/article.md --type infographic
-
-# Specify style
-/baoyu-article-illustrator path/to/article.md --style blueprint
-
-# Combine type and style
+# Specify type and style
 /baoyu-article-illustrator path/to/article.md --type flowchart --style notion
+
+# With palette override
+/baoyu-article-illustrator path/to/article.md --style vector-illustration --palette macaron
 ```
 
 **Types** (information structure):
@@ -498,7 +539,7 @@ Smart article illustration skill with Type × Style two-dimension approach. Anal
 | `framework` | Concept maps, relationship diagrams | Methodologies, architecture |
 | `timeline` | Chronological progression | History, project progress |
 
-**Styles** (visual aesthetics):
+**Styles** (rendering approach):
 
 | Style | Description | Best For |
 |-------|-------------|----------|
@@ -510,6 +551,14 @@ Smart article illustration skill with Type × Style two-dimension approach. Anal
 | `watercolor` | Soft artistic with natural warmth | Lifestyle, travel, creative |
 | `editorial` | Magazine-style infographic | Tech explainers, journalism |
 | `scientific` | Academic precise diagrams | Biology, chemistry, technical |
+
+**Palettes** (optional color override):
+
+| Palette | Description | Best For |
+|---------|-------------|----------|
+| `macaron` | Soft pastel blocks (blue, mint, lavender, peach) on warm cream | Educational, knowledge, tutorials |
+| `warm` | Warm earth tones on soft peach, no cool colors | Brand, product, lifestyle |
+| `neon` | Vibrant neon on dark purple | Gaming, retro, pop culture |
 
 **Style Previews**:
 
@@ -663,28 +712,67 @@ Post content to Weibo (微博). Supports regular posts with text, images, and vi
 
 AI-powered generation backends.
 
-#### baoyu-image-gen
+#### baoyu-imagine
 
-AI SDK-based image generation using official OpenAI, Google and DashScope (Aliyun Tongyi Wanxiang) APIs. Supports text-to-image, reference images, aspect ratios, and quality presets.
+AI SDK-based image generation using OpenAI, Azure OpenAI, Google, OpenRouter, DashScope (Aliyun Tongyi Wanxiang), MiniMax, Jimeng (即梦), Seedream (豆包), and Replicate APIs. Supports text-to-image, reference images, aspect ratios, custom sizes, batch generation, and quality presets.
 
 ```bash
 # Basic generation (auto-detect provider)
-/baoyu-image-gen --prompt "A cute cat" --image cat.png
+/baoyu-imagine --prompt "A cute cat" --image cat.png
 
 # With aspect ratio
-/baoyu-image-gen --prompt "A landscape" --image landscape.png --ar 16:9
+/baoyu-imagine --prompt "A landscape" --image landscape.png --ar 16:9
 
 # High quality (2k)
-/baoyu-image-gen --prompt "A banner" --image banner.png --quality 2k
+/baoyu-imagine --prompt "A banner" --image banner.png --quality 2k
 
 # Specific provider
-/baoyu-image-gen --prompt "A cat" --image cat.png --provider openai
+/baoyu-imagine --prompt "A cat" --image cat.png --provider openai
+
+# Azure OpenAI (model = deployment name)
+/baoyu-imagine --prompt "A cat" --image cat.png --provider azure --model gpt-image-1.5
+
+# OpenRouter
+/baoyu-imagine --prompt "A cat" --image cat.png --provider openrouter
+
+# OpenRouter with reference images
+/baoyu-imagine --prompt "Make it blue" --image out.png --provider openrouter --model google/gemini-3.1-flash-image-preview --ref source.png
 
 # DashScope (Aliyun Tongyi Wanxiang)
-/baoyu-image-gen --prompt "一只可爱的猫" --image cat.png --provider dashscope
+/baoyu-imagine --prompt "一只可爱的猫" --image cat.png --provider dashscope
 
-# With reference images (Google multimodal only)
-/baoyu-image-gen --prompt "Make it blue" --image out.png --ref source.png
+# DashScope with custom size
+/baoyu-imagine --prompt "为咖啡品牌设计一张 21:9 横幅海报，包含清晰中文标题" --image banner.png --provider dashscope --model qwen-image-2.0-pro --size 2048x872
+
+# Z.AI GLM-Image
+/baoyu-imagine --prompt "一张带清晰中文标题的科技海报" --image out.png --provider zai
+
+# MiniMax
+/baoyu-imagine --prompt "A fashion editorial portrait by a bright studio window" --image out.jpg --provider minimax
+
+# MiniMax with subject reference
+/baoyu-imagine --prompt "A girl stands by the library window, cinematic lighting" --image out.jpg --provider minimax --model image-01 --ref portrait.png --ar 16:9
+
+# Replicate (default: google/nano-banana-2)
+/baoyu-imagine --prompt "A cat" --image cat.png --provider replicate
+
+# Replicate Seedream 4.5
+/baoyu-imagine --prompt "A studio portrait" --image portrait.png --provider replicate --model bytedance/seedream-4.5 --ar 3:2
+
+# Replicate Wan 2.7 Image Pro
+/baoyu-imagine --prompt "A concept frame" --image frame.png --provider replicate --model wan-video/wan-2.7-image-pro --size 2048x1152
+
+# Jimeng (即梦)
+/baoyu-imagine --prompt "一只可爱的猫" --image cat.png --provider jimeng
+
+# Seedream (豆包)
+/baoyu-imagine --prompt "一只可爱的猫" --image cat.png --provider seedream
+
+# With reference images (Google, OpenAI, Azure OpenAI, OpenRouter, Replicate, MiniMax, or Seedream 5.0/4.5/4.0)
+/baoyu-imagine --prompt "Make it blue" --image out.png --ref source.png
+
+# Batch mode
+/baoyu-imagine --batchfile batch.json --jobs 4 --json
 ```
 
 **Options**:
@@ -693,30 +781,85 @@ AI SDK-based image generation using official OpenAI, Google and DashScope (Aliyu
 | `--prompt`, `-p` | Prompt text |
 | `--promptfiles` | Read prompt from files (concatenated) |
 | `--image` | Output image path (required) |
-| `--provider` | `google`, `openai` or `dashscope` (default: google) |
-| `--model`, `-m` | Model ID |
+| `--batchfile` | JSON batch file for multi-image generation |
+| `--jobs` | Worker count for batch mode |
+| `--provider` | `google`, `openai`, `azure`, `openrouter`, `dashscope`, `zai`, `minimax`, `jimeng`, `seedream`, or `replicate` |
+| `--model`, `-m` | Model ID or deployment name. Azure uses deployment name; OpenRouter uses full model IDs; Z.AI uses `glm-image`; MiniMax uses `image-01` / `image-01-live` |
 | `--ar` | Aspect ratio (e.g., `16:9`, `1:1`, `4:3`) |
 | `--size` | Size (e.g., `1024x1024`) |
-| `--quality` | `normal` or `2k` (default: normal) |
-| `--ref` | Reference images (Google multimodal only) |
+| `--quality` | `normal` or `2k` (default: `2k`) |
+| `--imageSize` | `1K`, `2K`, or `4K` for Google/OpenRouter |
+| `--imageApiDialect` | `openai-native` or `ratio-metadata` for OpenAI-compatible gateways |
+| `--ref` | Reference images (Google, OpenAI, Azure OpenAI, OpenRouter, Replicate supported families, MiniMax, or Seedream 5.0/4.5/4.0) |
+| `--n` | Number of images per request (`replicate` currently requires `--n 1`) |
+| `--json` | JSON output |
 
 **Environment Variables** (see [Environment Configuration](#environment-configuration) for setup):
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `OPENAI_API_KEY` | OpenAI API key | - |
+| `AZURE_OPENAI_API_KEY` | Azure OpenAI API key | - |
+| `OPENROUTER_API_KEY` | OpenRouter API key | - |
 | `GOOGLE_API_KEY` | Google API key | - |
+| `GEMINI_API_KEY` | Alias for `GOOGLE_API_KEY` | - |
 | `DASHSCOPE_API_KEY` | DashScope API key (Aliyun) | - |
+| `ZAI_API_KEY` | Z.AI API key | - |
+| `BIGMODEL_API_KEY` | Backward-compatible alias for Z.AI API key | - |
+| `MINIMAX_API_KEY` | MiniMax API key | - |
+| `REPLICATE_API_TOKEN` | Replicate API token | - |
+| `JIMENG_ACCESS_KEY_ID` | Jimeng Volcengine access key | - |
+| `JIMENG_SECRET_ACCESS_KEY` | Jimeng Volcengine secret key | - |
+| `ARK_API_KEY` | Seedream Volcengine ARK API key | - |
 | `OPENAI_IMAGE_MODEL` | OpenAI model | `gpt-image-1.5` |
+| `AZURE_OPENAI_DEPLOYMENT` | Azure default deployment name | - |
+| `AZURE_OPENAI_IMAGE_MODEL` | Backward-compatible Azure deployment/model alias | `gpt-image-1.5` |
+| `OPENROUTER_IMAGE_MODEL` | OpenRouter model | `google/gemini-3.1-flash-image-preview` |
 | `GOOGLE_IMAGE_MODEL` | Google model | `gemini-3-pro-image-preview` |
-| `DASHSCOPE_IMAGE_MODEL` | DashScope model | `z-image-turbo` |
+| `DASHSCOPE_IMAGE_MODEL` | DashScope model | `qwen-image-2.0-pro` |
+| `ZAI_IMAGE_MODEL` | Z.AI model | `glm-image` |
+| `BIGMODEL_IMAGE_MODEL` | Backward-compatible alias for Z.AI model | `glm-image` |
+| `MINIMAX_IMAGE_MODEL` | MiniMax model | `image-01` |
+| `REPLICATE_IMAGE_MODEL` | Replicate model | `google/nano-banana-2` |
+| `JIMENG_IMAGE_MODEL` | Jimeng model | `jimeng_t2i_v40` |
+| `SEEDREAM_IMAGE_MODEL` | Seedream model | `doubao-seedream-5-0-260128` |
 | `OPENAI_BASE_URL` | Custom OpenAI endpoint | - |
+| `OPENAI_IMAGE_API_DIALECT` | OpenAI-compatible image API dialect (`openai-native` or `ratio-metadata`) | `openai-native` |
+| `OPENAI_IMAGE_USE_CHAT` | Use `/chat/completions` for OpenAI image generation | `false` |
+| `AZURE_OPENAI_BASE_URL` | Azure resource or deployment endpoint | - |
+| `AZURE_API_VERSION` | Azure image API version | `2025-04-01-preview` |
+| `OPENROUTER_BASE_URL` | Custom OpenRouter endpoint | `https://openrouter.ai/api/v1` |
+| `OPENROUTER_HTTP_REFERER` | Optional app/site URL for OpenRouter attribution | - |
+| `OPENROUTER_TITLE` | Optional app name for OpenRouter attribution | - |
 | `GOOGLE_BASE_URL` | Custom Google endpoint | - |
 | `DASHSCOPE_BASE_URL` | Custom DashScope endpoint | - |
+| `ZAI_BASE_URL` | Custom Z.AI endpoint | `https://api.z.ai/api/paas/v4` |
+| `BIGMODEL_BASE_URL` | Backward-compatible alias for Z.AI endpoint | - |
+| `MINIMAX_BASE_URL` | Custom MiniMax endpoint | `https://api.minimax.io` |
+| `REPLICATE_BASE_URL` | Custom Replicate endpoint | - |
+| `JIMENG_BASE_URL` | Custom Jimeng endpoint | `https://visual.volcengineapi.com` |
+| `JIMENG_REGION` | Jimeng region | `cn-north-1` |
+| `SEEDREAM_BASE_URL` | Custom Seedream endpoint | `https://ark.cn-beijing.volces.com/api/v3` |
+| `BAOYU_IMAGE_GEN_MAX_WORKERS` | Override batch worker cap | `10` |
+| `BAOYU_IMAGE_GEN_<PROVIDER>_CONCURRENCY` | Override provider concurrency | provider-specific |
+| `BAOYU_IMAGE_GEN_<PROVIDER>_START_INTERVAL_MS` | Override provider request start gap | provider-specific |
+
+**Provider Notes**:
+- Azure OpenAI: `--model` means Azure deployment name, not the underlying model family.
+- DashScope: `qwen-image-2.0-pro` is the recommended default for custom `--size`, `21:9`, and strong Chinese/English text rendering.
+- Z.AI: `glm-image` is recommended for posters, diagrams, and text-heavy Chinese/English images. Reference images are not supported.
+- MiniMax: `image-01` supports documented custom `width` / `height`; `image-01-live` is lower latency and works best with `--ar`.
+- MiniMax reference images are sent as `subject_reference`; the current API is specialized toward character / portrait consistency.
+- Jimeng does not support reference images.
+- Seedream reference images are supported by Seedream 5.0 / 4.5 / 4.0, not Seedream 3.0.
+- Replicate defaults to `google/nano-banana-2`. `baoyu-imagine` only enables Replicate advanced options for `google/nano-banana*`, `bytedance/seedream-4.5`, `bytedance/seedream-5-lite`, `wan-video/wan-2.7-image`, and `wan-video/wan-2.7-image-pro`.
+- Replicate currently saves exactly one output image per request. `--n > 1` is blocked locally instead of silently dropping extra results.
+- Replicate model behavior is family-specific: nano-banana uses `--quality` / `--ar`, Seedream uses validated `--size` / `--ar`, and Wan uses validated `--size` (with `--ar` converted locally to a concrete size).
 
 **Provider Auto-Selection**:
-1. If `--provider` specified → use it
-2. If only one API key available → use that provider
-3. If multiple available → default to Google
+1. If `--provider` is specified → use it
+2. If `--ref` is provided and no provider is specified → try Google, then OpenAI, Azure, OpenRouter, Replicate, Seedream, and finally MiniMax
+3. If only one API key is available → use that provider
+4. If multiple providers are available → default to Google, then OpenAI, Azure, OpenRouter, DashScope, Z.AI, MiniMax, Replicate, Jimeng, Seedream
 
 #### baoyu-danger-gemini-web
 
@@ -739,6 +882,40 @@ Interacts with Gemini Web to generate text and images.
 ### Utility Skills
 
 Utility tools for content processing.
+
+#### baoyu-youtube-transcript
+
+Download YouTube video transcripts/subtitles and cover images. Supports multiple languages, translation, chapters, and speaker identification. Caches raw data for fast re-formatting.
+
+```bash
+# Default: markdown with timestamps
+/baoyu-youtube-transcript https://www.youtube.com/watch?v=VIDEO_ID
+
+# Specify languages (priority order)
+/baoyu-youtube-transcript https://youtu.be/VIDEO_ID --languages zh,en,ja
+
+# With chapters and speaker identification
+/baoyu-youtube-transcript https://youtu.be/VIDEO_ID --chapters --speakers
+
+# SRT subtitle format
+/baoyu-youtube-transcript https://youtu.be/VIDEO_ID --format srt
+
+# List available transcripts
+/baoyu-youtube-transcript https://youtu.be/VIDEO_ID --list
+```
+
+**Options**:
+| Option | Description | Default |
+|--------|-------------|---------|
+| `<url-or-id>` | YouTube URL or video ID | Required |
+| `--languages <codes>` | Language codes, comma-separated | `en` |
+| `--format <fmt>` | Output format: `text`, `srt` | `text` |
+| `--translate <code>` | Translate to specified language | |
+| `--chapters` | Chapter segmentation from video description | |
+| `--speakers` | Speaker identification (requires AI post-processing) | |
+| `--no-timestamps` | Disable timestamps | |
+| `--list` | List available transcripts | |
+| `--refresh` | Force re-fetch, ignore cache | |
 
 #### baoyu-url-to-markdown
 
@@ -940,7 +1117,7 @@ Custom style descriptions are also accepted, e.g., `--style "poetic and lyrical"
 Some skills require API keys or custom configuration. Environment variables can be set in `.env` files:
 
 **Load Priority** (higher priority overrides lower):
-1. CLI environment variables (e.g., `OPENAI_API_KEY=xxx /baoyu-image-gen ...`)
+1. CLI environment variables (e.g., `OPENAI_API_KEY=xxx /baoyu-imagine ...`)
 2. `process.env` (system environment)
 3. `<cwd>/.baoyu-skills/.env` (project-level)
 4. `~/.baoyu-skills/.env` (user-level)
@@ -957,6 +1134,20 @@ cat > ~/.baoyu-skills/.env << 'EOF'
 OPENAI_API_KEY=sk-xxx
 OPENAI_IMAGE_MODEL=gpt-image-1.5
 # OPENAI_BASE_URL=https://api.openai.com/v1
+# OPENAI_IMAGE_USE_CHAT=false
+
+# Azure OpenAI
+AZURE_OPENAI_API_KEY=xxx
+AZURE_OPENAI_BASE_URL=https://your-resource.openai.azure.com
+AZURE_OPENAI_DEPLOYMENT=gpt-image-1.5
+# AZURE_API_VERSION=2025-04-01-preview
+
+# OpenRouter
+OPENROUTER_API_KEY=sk-or-xxx
+OPENROUTER_IMAGE_MODEL=google/gemini-3.1-flash-image-preview
+# OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+# OPENROUTER_HTTP_REFERER=https://your-app.example.com
+# OPENROUTER_TITLE=Your App Name
 
 # Google
 GOOGLE_API_KEY=xxx
@@ -965,8 +1156,35 @@ GOOGLE_IMAGE_MODEL=gemini-3-pro-image-preview
 
 # DashScope (Aliyun Tongyi Wanxiang)
 DASHSCOPE_API_KEY=sk-xxx
-DASHSCOPE_IMAGE_MODEL=z-image-turbo
+DASHSCOPE_IMAGE_MODEL=qwen-image-2.0-pro
 # DASHSCOPE_BASE_URL=https://dashscope.aliyuncs.com/api/v1
+
+# Z.AI
+ZAI_API_KEY=xxx
+ZAI_IMAGE_MODEL=glm-image
+# ZAI_BASE_URL=https://api.z.ai/api/paas/v4
+
+# MiniMax
+MINIMAX_API_KEY=xxx
+MINIMAX_IMAGE_MODEL=image-01
+# MINIMAX_BASE_URL=https://api.minimax.io
+
+# Replicate
+REPLICATE_API_TOKEN=r8_xxx
+REPLICATE_IMAGE_MODEL=google/nano-banana-2
+# REPLICATE_BASE_URL=https://api.replicate.com
+
+# Jimeng (即梦)
+JIMENG_ACCESS_KEY_ID=xxx
+JIMENG_SECRET_ACCESS_KEY=xxx
+JIMENG_IMAGE_MODEL=jimeng_t2i_v40
+# JIMENG_BASE_URL=https://visual.volcengineapi.com
+# JIMENG_REGION=cn-north-1
+
+# Seedream (豆包)
+ARK_API_KEY=xxx
+SEEDREAM_IMAGE_MODEL=doubao-seedream-5-0-260128
+# SEEDREAM_BASE_URL=https://ark.cn-beijing.volces.com/api/v3
 EOF
 ```
 

@@ -1,4 +1,13 @@
-export type Provider = "google" | "openai" | "dashscope" | "replicate";
+export type Provider =
+  | "google"
+  | "openai"
+  | "openrouter"
+  | "dashscope"
+  | "minimax"
+  | "replicate"
+  | "jimeng"
+  | "seedream"
+  | "azure";
 export type Quality = "normal" | "2k";
 
 export type CliArgs = {
@@ -50,8 +59,13 @@ export type ExtendConfig = {
   default_model: {
     google: string | null;
     openai: string | null;
+    openrouter: string | null;
     dashscope: string | null;
+    minimax: string | null;
     replicate: string | null;
+    jimeng: string | null;
+    seedream: string | null;
+    azure: string | null;
   };
   batch?: {
     max_workers?: number | null;

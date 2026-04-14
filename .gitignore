@@ -154,6 +154,7 @@ illustrations/
 comic/
 translate/
 posts/
+diagram/
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -166,3 +167,5 @@ posts/
 .clawdhub/
 .release-artifacts/
 .worktrees/
+youtube-transcript/
+.omx/

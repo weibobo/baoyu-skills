@@ -2,6 +2,19 @@
 
 English | [中文](./CHANGELOG.zh.md)
 
+## 1.107.0 - 2026-04-15
+
+### Features
+- `baoyu-diagram`: add SVG-to-PNG @2x conversion script — auto-converts generated SVG diagrams to @2x PNG using Sharp; consolidate reference files and add `{baseDir}` path resolution for portable skill loading
+
+### Fixes
+- `claude-plugin`: allow inline marketplace manifest (#130)
+
+## 1.106.0 - 2026-04-14
+
+### Features
+- `baoyu-diagram`: add architecture enrichment rules — automatically expand architecture diagrams with multiple client types, per-service tech stacks, database tiers, message buses, and color-coded categories; add full structural layout patterns, architecture-specific pitfalls, network topology templates, and layout math for complex diagrams
+
 ## 1.105.0 - 2026-04-13
 
 ### Features

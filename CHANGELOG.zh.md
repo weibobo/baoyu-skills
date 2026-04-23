@@ -2,6 +2,35 @@
 
 [English](./CHANGELOG.md) | 中文
 
+## 1.111.1 - 2026-04-21
+
+### 文档
+- 为每个图片生成类技能（`baoyu-infographic`、`baoyu-cover-image`、`baoyu-slide-deck`、`baoyu-image-cards`、`baoyu-xhs-images`、`baoyu-article-illustrator`）新增顶级 `## Confirmation Policy` 章节作为单一事实源：显式调用技能、关键词快捷方式、EXTEND.md 偏好、自动推荐都只是"推荐输入"，不授权跳过确认步骤。跳过确认必须由当前请求中的明确信号触发（`--no-confirm` / `--quick` / `--yes` / "直接生成" / 同义表达）。
+- `baoyu-infographic`：将原先散落在 Step 5、Step 6、Default combination、Keyword Shortcuts 及 preferences 文档中的重复提醒合并为单一策略章节，由 Step 4 的 hard gate 引用。
+
+## 1.111.0 - 2026-04-21
+
+### 重构
+- 统一所有图片生成类技能（`baoyu-infographic`、`baoyu-comic`、`baoyu-cover-image`、`baoyu-image-cards`、`baoyu-article-illustrator`、`baoyu-slide-deck`、`baoyu-xhs-images`）的后端选择规则：新增单一 `preferred_image_backend` 偏好字段（`auto | ask | <backend-id>`），用 4 步解析规则（当前请求覆盖 → 已保存偏好 → 自动选择 → 询问用户）替换原有的无状态询问规则。默认优先使用运行时原生工具（如 Codex `imagegen`、Hermes `image_generate`）；未设置该字段的现有 `EXTEND.md` 文件视为 `auto`，无需升级 schema 版本。
+- 在每个图片技能中新增顶级 `## Changing Preferences` 章节,作为固定后端和修改常用偏好的一级入口。
+
+## 1.110.0 - 2026-04-21
+
+### 新功能
+- `baoyu-imagine`：新增 `gpt-image-2` 支持，用于 OpenAI 图像生成与编辑；将其设为默认 OpenAI 模型，并补齐官方尺寸/质量映射、自定义尺寸约束与 Azure 部署说明
+
+## 1.109.0 - 2026-04-21
+
+### 新功能
+- `baoyu-url-to-markdown`：将 `baoyu-fetch` 运行时代码 vendored 到 `scripts/lib`，并通过本地 `scripts/baoyu-fetch` CLI 调用，使发布后的技能安装不再依赖 `baoyu-fetch` npm 包
+
+### 修复
+- `baoyu-fetch`：修复 X/Twitter 单条内容与 X Article 的视频解析，提取可播放的最高码率 MP4，并将文章视频渲染为 `[video](...)`
+- `sync-clawhub`：改用共享 release 文件清单发布，确保无扩展名 CLI 入口、`bun.lock` 和 vendored `scripts/lib` 文件都会被上传
+
+### 维护
+- 将 `defuddle` 升级到 0.17.0、`jsdom` 升级到 29.0.2，并通过 override 将 `@xmldom/xmldom` 固定到 0.8.13，清除 Defuddle 依赖链上的漏洞提示
+
 ## 1.108.0 - 2026-04-19
 
 ### 重构

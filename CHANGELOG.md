@@ -2,6 +2,35 @@
 
 English | [中文](./CHANGELOG.zh.md)
 
+## 1.111.1 - 2026-04-21
+
+### Documentation
+- Add a top-level `## Confirmation Policy` section to every image-generating skill (`baoyu-infographic`, `baoyu-cover-image`, `baoyu-slide-deck`, `baoyu-image-cards`, `baoyu-xhs-images`, `baoyu-article-illustrator`) as a single source of truth: explicit skill invocation, keyword shortcuts, EXTEND.md defaults, and auto-recommendations are recommendation inputs only — they never authorize skipping the confirmation step. Opt-out requires an explicit current-request signal (`--no-confirm` / `--quick` / `--yes` / "直接生成" / equivalent).
+- `baoyu-infographic`: consolidate the scattered reminders (previously repeated across Step 5, Step 6, Default combination, Keyword Shortcuts, and the preferences docs) into a single policy section referenced from Step 4's hard gate.
+
+## 1.111.0 - 2026-04-21
+
+### Refactor
+- Unify image-backend resolution across all image-consuming skills (`baoyu-infographic`, `baoyu-comic`, `baoyu-cover-image`, `baoyu-image-cards`, `baoyu-article-illustrator`, `baoyu-slide-deck`, `baoyu-xhs-images`): add a single `preferred_image_backend` preference field (`auto | ask | <backend-id>`) and replace the stateless ask-once rule with a 4-step resolution (current-request override → saved preference → auto-select → ask). Runtime-native tools (Codex `imagegen`, Hermes `image_generate`) are preferred by default; existing `EXTEND.md` files without the field are treated as `auto` with no schema bump.
+- Add a top-level `## Changing Preferences` section to each image-consuming skill as a first-class surface for pinning the backend and editing common one-line preferences.
+
+## 1.110.0 - 2026-04-21
+
+### Features
+- `baoyu-imagine`: add `gpt-image-2` support for OpenAI image generation and edits, make it the default OpenAI model, and document the official size/quality mapping, custom-size constraints, and Azure deployment guidance
+
+## 1.109.0 - 2026-04-21
+
+### Features
+- `baoyu-url-to-markdown`: vendor the `baoyu-fetch` runtime into `scripts/lib` and run it through a local `scripts/baoyu-fetch` CLI so published skill installs are self-contained
+
+### Fixes
+- `baoyu-fetch`: extract playable X/Twitter video MP4 variants for single posts and X Articles, choosing the highest-bitrate MP4 and rendering article videos as `[video](...)`
+- `sync-clawhub`: publish from the shared release file list so extensionless CLI entrypoints, `bun.lock`, and vendored `scripts/lib` files are uploaded
+
+### Maintenance
+- Upgrade `defuddle` to 0.17.0 and `jsdom` to 29.0.2; override `@xmldom/xmldom` to 0.8.13 to keep the Defuddle dependency chain vulnerability-free
+
 ## 1.108.0 - 2026-04-19
 
 ### Refactor

@@ -2,6 +2,23 @@
 
 English | [中文](./CHANGELOG.zh.md)
 
+## 1.113.0 - 2026-04-25
+
+### Features
+- `baoyu-imagine`: add DashScope Wan 2.7 image model support (`wan2.7-image-pro` and `wan2.7-image`) directly through the official Aliyun (Bailian) API. Supports text-to-image, image editing, and multi-image fusion with up to 9 reference images, with documented `[1:8, 8:1]` aspect ratio validation and per-mode pixel-budget rules. Forces `parameters.n: 1` to match baoyu-imagine's single-image save semantics and explicitly rejects `--n > 1` to prevent silent multi-image billing (the API defaults to `n=4` in non-collage mode). Allows `--provider dashscope --ref ...` opt-in for Wan 2.7 reference workflows.
+
+## 1.112.0 - 2026-04-24
+
+### Features
+- `baoyu-article-illustrator`: make `hand-drawn-edu` (infographic + sketch-notes + macaron) the universal fallback preset when content analysis surfaces no strong signal — warm cream paper, black hand-drawn lines, soft pastel section blocks. Elevate `sketch-notes` to primary style across infographic / flowchart / comparison / framework auto-selection; rewrite the sketch-notes style spec (macaron palette, canonical single-page layout, diagram-only rule); add matching prompt block and workflow defaults.
+- `baoyu-article-illustrator`: add `hand-drawn-edu-flow` (flowchart) and `hand-drawn-edu-compare` (comparison) presets for the same warm educational style.
+
+### Breaking Changes
+- `baoyu-article-illustrator`: `hand-drawn-edu` preset now maps to `infographic` instead of `flowchart`. Users relying on the previous flowchart behavior should switch to the new `hand-drawn-edu-flow` preset.
+
+### Fixes
+- `baoyu-post-to-x`: add entry point guard to `scripts/md-to-html.ts` so that importing `parseMarkdown` from `x-article.ts` no longer triggers the CLI entry point. Mirrors the same fix applied to `baoyu-post-to-weibo`.
+
 ## 1.111.1 - 2026-04-21
 
 ### Documentation
